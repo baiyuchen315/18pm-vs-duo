@@ -25,79 +25,34 @@
   --duo: #D9660B;
   --duo-text: #A34700;
   --duo-fill: rgba(217, 102, 11, 0.18);
+  --warn: #B42318;
   --font-body: 'IBM Plex Sans', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
   --font-num: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0D1117;
-    --surface: #151B24;
-    --surface-2: #212A37;
-    --fg: #E8ECF2;
-    --muted: #9AA6B6;
-    --line: #2B3442;
-    --pm: #6EA2FF;
-    --pm-text: #8DB8FF;
-    --pm-fill: rgba(110, 162, 255, 0.22);
-    --duo: #FF9A4D;
-    --duo-text: #FFB070;
-    --duo-fill: rgba(255, 154, 77, 0.22);
+    --bg: #0D1117; --surface: #151B24; --surface-2: #212A37; --fg: #E8ECF2; --muted: #9AA6B6; --line: #2B3442;
+    --pm: #6EA2FF; --pm-text: #8DB8FF; --pm-fill: rgba(110, 162, 255, 0.22);
+    --duo: #FF9A4D; --duo-text: #FFB070; --duo-fill: rgba(255, 154, 77, 0.22);
+    --warn: #FF8A80;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0D1117;
-  --surface: #151B24;
-  --surface-2: #212A37;
-  --fg: #E8ECF2;
-  --muted: #9AA6B6;
-  --line: #2B3442;
-  --pm: #6EA2FF;
-  --pm-text: #8DB8FF;
-  --pm-fill: rgba(110, 162, 255, 0.22);
-  --duo: #FF9A4D;
-  --duo-text: #FFB070;
-  --duo-fill: rgba(255, 154, 77, 0.22);
+  --bg: #0D1117; --surface: #151B24; --surface-2: #212A37; --fg: #E8ECF2; --muted: #9AA6B6; --line: #2B3442;
+  --pm: #6EA2FF; --pm-text: #8DB8FF; --pm-fill: rgba(110, 162, 255, 0.22);
+  --duo: #FF9A4D; --duo-text: #FFB070; --duo-fill: rgba(255, 154, 77, 0.22);
+  --warn: #FF8A80;
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
-body {
-  background: var(--bg);
-  color: var(--fg);
-  font: 15px/1.55 var(--font-body);
-}
-.gut {
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0 0 auto;
-  height: env(safe-area-inset-top, 0px);
-  z-index: 20;
-  background: var(--surface);
-}
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--font-body); }
+.gut { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); }
 
-/* Sticky score bar */
-.bar {
-  position: sticky;
-  top: env(safe-area-inset-top, 0px);
-  z-index: 19;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-}
-.bar-in {
-  max-width: 1120px;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px 20px;
-  padding-block: 10px;
-}
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 19; background: var(--surface); border-bottom: 1px solid var(--line); }
+.bar-in { max-width: 1120px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; padding-block: 10px; }
 .brand { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
 .brand strong { font-size: 15px; font-weight: 600; }
 .brand span { color: var(--muted); font-size: 13px; }
@@ -113,66 +68,73 @@ body::before {
 .tools { display: flex; flex-wrap: wrap; gap: 10px 8px; align-items: center; }
 .seg { display: inline-flex; flex-wrap: wrap; gap: 6px; }
 button, a.btn {
-  display: inline-block;
-  text-decoration: none;
-  font: 500 13px var(--font-body);
-  color: var(--fg);
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 7px 12px;
-  cursor: pointer;
+  display: inline-block; text-decoration: none; font: 500 13px var(--font-body); color: var(--fg);
+  background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer;
 }
 button:hover, a.btn:hover { background: var(--surface-2); }
 button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
-button:focus-visible, input:focus-visible, a.btn:focus-visible { outline: 2px solid var(--pm); outline-offset: 2px; }
+button:focus-visible, input:focus-visible, select:focus-visible, a.btn:focus-visible, summary:focus-visible { outline: 2px solid var(--pm); outline-offset: 2px; }
 .tools .spacer { flex: 1 1 0; min-width: 0; }
+.scen { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; margin-top: 12px; }
+.sgrp { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.sgrp .k { font-size: 12.5px; color: var(--muted); }
+.sgrp .seg button { padding: 4px 10px; font-size: 12.5px; }
+.sx { display: inline-flex; align-items: center; gap: 8px; }
+.sx input { width: 110px; accent-color: var(--duo); }
+.sx output { font: 500 12.5px var(--font-num); min-width: 3.2em; }
+.sx[hidden], .sgrp[hidden] { display: none; }
 
 .cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 16px; }
-@media (min-width: 960px) {
-  .cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: start; gap: 36px; }
-}
+@media (min-width: 960px) { .cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: start; gap: 36px; } }
 h2 { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: var(--muted); }
-.sec-head { display: flex; align-items: baseline; margin-bottom: 10px; }
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.pend { font-size: 12.5px; color: var(--muted); }
 
-/* Inputs: groups contain items */
 .grp { margin-top: 18px; }
 .grp-head { background: var(--surface-2); border-radius: 6px; padding: 10px 12px 8px; }
-.grp-top { display: flex; align-items: center; gap: 10px; }
-.grp-top .gname { margin: 0; min-width: 0; font-size: 15px; font-weight: 600; }
-button.gtog { display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; border: 0; border-radius: 0; background: transparent; padding: 2px 0; text-align: left; font: inherit; color: var(--fg); }
-button.gtog:hover { background: transparent; }
-button.gtog.chev-only { flex: none; padding-right: 2px; }
-.gtog .chev { margin-right: 0; flex: none; }
+.grp-top { display: flex; align-items: center; gap: 8px; }
+.gtog { flex: none; border: 0; background: transparent; padding: 4px 6px 4px 0; line-height: 1; }
+.gtog:hover { background: transparent; }
 .gtog.open .chev { transform: rotate(90deg); }
+.gtog.wide { flex: 1 1 auto; display: flex; align-items: center; gap: 4px; text-align: left; font: 600 15px var(--font-body); color: var(--fg); padding: 2px 0; }
 .gcount { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
-.undo { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
-.undo[hidden] { display: none; }
-.gout { font: 500 14px var(--font-num); font-variant-numeric: tabular-nums; }
+.gout { font: 500 14px var(--font-num); font-variant-numeric: tabular-nums; min-width: 2.8em; text-align: right; }
 .grp-head input[type="range"] { display: block; width: 100%; margin: 6px 0 0; accent-color: var(--fg); }
 .grp-body { margin-left: 4px; padding-left: 12px; border-left: 2px solid var(--line); }
 .nm-in {
-  flex: 1 1 auto; min-width: 0; width: 100%;
-  font: 600 15px var(--font-body); color: var(--fg);
-  background: transparent; border: 0; border-bottom: 1px dashed var(--muted);
-  border-radius: 0; padding: 2px 0;
+  flex: 1 1 140px; min-width: 0; width: 100%; font: 600 15px var(--font-body); color: var(--fg);
+  background: transparent; border: 0; border-bottom: 1px dashed transparent; border-radius: 0; padding: 2px 0;
 }
-.x { border: 0; background: transparent; color: var(--muted); padding: 0 6px; font-size: 18px; line-height: 1.2; }
-.x:hover { background: transparent; color: var(--fg); }
+.nm-in:hover, .nm-in:focus { border-bottom-color: var(--muted); }
+.undo { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.undo[hidden] { display: none; }
+.ib { border: 0; background: transparent; color: var(--muted); padding: 3px 5px; font-size: 15px; line-height: 1; border-radius: 4px; }
+.ib:hover { background: transparent; color: var(--fg); }
+.ib svg { display: block; }
+.ib.lk svg rect { fill: none; }
+.ib.lk[aria-pressed="true"] { background: transparent; color: var(--pm-text); border: 0; }
+.ib.lk[aria-pressed="true"] svg rect { fill: currentColor; }
+.ib:disabled { opacity: 0.3; cursor: default; }
+.x { font-size: 18px; }
 .add { margin-top: 8px; border-style: dashed; color: var(--muted); }
 #add-g { margin-top: 18px; }
 .dim { padding: 14px 0 16px; border-top: 1px solid var(--line); }
 .dim:first-child { border-top: 0; }
-.dim-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
-.dim h3 { margin: 0; font-size: 15px; font-weight: 600; }
-.dim-r { display: inline-flex; align-items: center; gap: 4px; flex: none; }
-.dim .share { font: 12.5px var(--font-num); color: var(--muted); white-space: nowrap; }
+.dim.off .sliders, .dim.off .nm-in { opacity: 0.5; }
+.dim-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-bottom: 10px; }
+.ck { width: 16px; height: 16px; margin: 0; accent-color: var(--fg); flex: none; }
+.dim-r { display: inline-flex; align-items: center; gap: 2px; flex: none; margin-left: auto; }
+.dim .share { font: 12.5px var(--font-num); color: var(--muted); white-space: nowrap; margin-right: 4px; }
+.bdg { font: 500 11.5px var(--font-body); color: var(--muted); border: 1px solid var(--line); border-radius: 10px; padding: 0 7px; margin-right: 4px; line-height: 1.6; }
+button.bdg { cursor: pointer; }
+.bdg:empty, .bdg[hidden] { display: none; }
 .sliders { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
 @media (min-width: 520px) { .sliders { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 18px; } }
 .s { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 8px; font-size: 13px; }
 .s span { font-weight: 500; }
 .s output { font: 500 13px var(--font-num); font-variant-numeric: tabular-nums; }
 .s input { grid-column: 1 / -1; width: 100%; margin: 4px 0 0; }
+.s.pend input { opacity: 0.4; }
 .s.pm span, .s.pm output { color: var(--pm-text); }
 .s.pm input { accent-color: var(--pm); }
 .s.duo span, .s.duo output { color: var(--duo-text); }
@@ -180,7 +142,34 @@ button.gtog.chev-only { flex: none; padding-right: 2px; }
 .s.w input { accent-color: var(--muted); }
 .s.w span { color: var(--muted); }
 
-/* Results */
+select { font: 500 12.5px var(--font-body); color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 6px; min-width: 0; width: 100%; }
+.trow { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1.1fr) auto; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+.trow:first-child, .tcap + .trow { border-top: 0; }
+.trow .nm-in { font-weight: 500; flex: none; }
+.trow select.pm { border-color: var(--pm); }
+.trow select.duo { border-color: var(--duo); }
+.trow.off { opacity: 0.5; }
+.tcap { display: grid; grid-template-columns: 24px minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1.1fr) 28px; gap: 8px; font-size: 12px; margin-bottom: 2px; }
+.tcap .pm { color: var(--pm-text); grid-column: 3; }
+.tcap .duo { color: var(--duo-text); grid-column: 4; }
+.gsum { display: inline-flex; gap: 10px; font-size: 12.5px; white-space: nowrap; }
+.gsum .pm { color: var(--pm-text); }
+.gsum .duo { color: var(--duo-text); }
+.gsum .bad { color: var(--warn); }
+@media (max-width: 560px) {
+  .trow { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .trow .nm-in { grid-column: 2; }
+  .trow select.pm { grid-column: 1 / 3; grid-row: 2; }
+  .trow select.duo { grid-column: 3 / 5; grid-row: 2; }
+  .trow .x { grid-column: 3; grid-row: 1; }
+  .tcap { display: none; }
+}
+
+details.note { margin-top: 22px; font-size: 13px; color: var(--muted); }
+details.note summary { cursor: pointer; font-weight: 500; }
+details.note ul { margin: 8px 0 0; padding-left: 18px; }
+details.note li { margin: 3px 0; }
+
 .results { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
 .res { padding: 18px 18px 20px; }
 .res + .res { border-top: 1px solid var(--line); }
@@ -198,8 +187,14 @@ button.gtog.chev-only { flex: none; padding-right: 2px; }
 .tot.pm .meter i { background: var(--pm); }
 .tot.duo .meter i { background: var(--duo); }
 @media (prefers-reduced-motion: no-preference) { .meter i { transition: width 0.2s ease; } }
+.gate { margin-top: 8px; font-size: 12.5px; line-height: 1.4; }
+.gate b { font-weight: 600; }
+.gate.bad { color: var(--warn); }
+.gate.ok, .gate.pending, .gate.info { color: var(--muted); }
 .verdict { margin: 14px 0 0; font-size: 15px; }
 .verdict b { font-weight: 600; }
+.tags { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
+.tags:empty { display: none; }
 
 .radar-wrap { max-width: 460px; margin: 6px auto 0; }
 svg.radar { display: block; width: 100%; height: auto; }
@@ -217,18 +212,15 @@ svg.radar { display: block; width: 100%; height: auto; }
 .legend .pm i { background: var(--pm); }
 .legend .duo i { background: var(--duo); }
 
-.axis-cap { display: grid; grid-template-columns: 8.5em minmax(0, 1fr) 3.6em; gap: 10px; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
+.axis-cap { display: grid; grid-template-columns: 10.5em minmax(0, 1fr) 3.6em; gap: 10px; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
 .axis-cap div { display: flex; justify-content: space-between; }
 .axis-cap .l { color: var(--duo-text); }
 .axis-cap .r { color: var(--pm-text); }
-.brow { display: grid; grid-template-columns: 8.5em minmax(0, 1fr) 3.6em; align-items: center; gap: 10px; padding: 5px 0; font-size: 13px; }
-button.grow {
-  width: 100%; border: 0; border-radius: 0; background: transparent; text-align: left;
-  font: 500 13px var(--font-body); color: var(--fg); padding: 5px 0;
-}
+.brow { display: grid; grid-template-columns: 10.5em minmax(0, 1fr) 3.6em; align-items: center; gap: 10px; padding: 5px 0; font-size: 13px; }
+button.grow { width: 100%; border: 0; border-radius: 0; background: transparent; text-align: left; font: 500 13px var(--font-body); color: var(--fg); padding: 5px 0; }
 button.grow:hover { background: transparent; }
 button.grow .nm { font-weight: 600; }
-.brow.sub { padding-left: 14px; grid-template-columns: calc(8.5em - 14px) minmax(0, 1fr) 3.6em; color: var(--muted); }
+.brow.sub { padding-left: 14px; grid-template-columns: calc(10.5em - 14px) minmax(0, 1fr) 3.6em; color: var(--muted); }
 .brow .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .chev { display: inline-block; width: 0; height: 0; border-left: 5px solid var(--muted); border-top: 4px solid transparent; border-bottom: 4px solid transparent; margin-right: 7px; }
 .grow.open .chev { transform: rotate(90deg); }
@@ -243,11 +235,20 @@ button.grow .nm { font-weight: 600; }
 .bv.duo { color: var(--duo-text); }
 .btotal { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 13px; }
 .btotal b { font: 500 13px var(--font-num); }
-.sens { margin: 8px 0 0; font-size: 14px; max-width: 62ch; }
+
+#sens { margin-top: 10px; }
+.sr { display: grid; grid-template-columns: 7em minmax(0, 1fr); gap: 6px 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 13.5px; align-items: baseline; }
+.sr:first-child { border-top: 0; padding-top: 2px; }
+.sl { color: var(--muted); font-size: 13px; }
+.sv { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
+.chp { display: inline-flex; gap: 6px; align-items: baseline; font: 500 12.5px var(--font-num); border: 1px solid var(--line); border-radius: 12px; padding: 1px 9px; white-space: nowrap; }
+.chp i { font: 400 12px var(--font-body); font-style: normal; color: var(--muted); }
+.chp.pm { color: var(--pm-text); border-color: var(--pm); }
+.chp.duo { color: var(--duo-text); border-color: var(--duo); }
+.flip { font-weight: 600; font-size: 12.5px; color: var(--warn); }
 .copy-msg { font-size: 13px; color: var(--muted); }
 
-.sheet { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
-  background: rgba(8, 12, 18, 0.6);
+.sheet { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: rgba(8, 12, 18, 0.6);
   padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 .sheet[hidden] { display: none; }
 .sheet-in { width: 100%; max-width: 460px; max-height: 100%; overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: grid; gap: 12px; }
@@ -258,6 +259,7 @@ button.grow .nm { font-weight: 600; }
   .res { padding: 16px 14px 18px; }
   .axis-cap, .brow { grid-template-columns: 7em minmax(0, 1fr) 3.4em; }
   .brow.sub { grid-template-columns: calc(7em - 14px) minmax(0, 1fr) 3.4em; }
+  .sr { grid-template-columns: minmax(0, 1fr); }
 }
 </style>
 </head>
@@ -273,27 +275,50 @@ button.grow .nm { font-weight: 600; }
 <main class="gut">
   <div class="wrap">
     <div class="tools">
-      <div class="seg" id="presets" role="group" aria-label="权重方案"></div>
+      <div class="seg" id="roles" role="group" aria-label="设备角色"></div>
       <span class="spacer"></span>
       <span class="undo" id="undo" hidden><span id="undo-msg"></span><button type="button" id="undo-btn">撤销</button></span>
       <button type="button" id="export">导出结果</button>
       <button type="button" id="reset">恢复初始</button>
     </div>
+    <div class="scen">
+      <div class="sgrp"><span class="k">新鲜感</span><div class="seg" id="sc-nov" role="group" aria-label="新鲜感情景"></div></div>
+      <div class="sgrp"><span class="k">软件</span><div class="seg" id="sc-soft" role="group" aria-label="软件情景"></div>
+        <label class="sx" id="sx-wrap" hidden><input type="range" id="sx" min="0" max="100" step="5" aria-label="Duo 软件改善幅度"><output id="sx-o"></output></label></div>
+      <div class="sgrp" id="mit-wrap" hidden><span class="k">备用机缓解</span>
+        <label class="sx"><input type="range" id="mit" min="0" max="100" step="5" aria-label="备用机缓解幅度"><output id="mit-o"></output></label></div>
+    </div>
 
     <div class="cols">
       <section aria-labelledby="h-in">
-        <div class="sec-head"><h2 id="h-in">打分与权重</h2></div>
+        <div class="sec-head"><h2 id="h-in">打分与权重</h2><span class="pend" id="pend"></span></div>
+        <div id="gate"></div>
         <div id="dims"></div>
+        <details class="note">
+          <summary>模型说明</summary>
+          <ul>
+            <li>实际权重 = 大类权重 × 类内权重；待评分或未计入的项目不参与，所在大类内其余项目按比例重算。</li>
+            <li>调整一项时，其余未锁定项按原有比例分摊；锁定项保持不变，可调上限 = 100% − 其他锁定项之和。</li>
+            <li>三种设备角色各自保存大类权重，两台手机的评分不随角色改变。</li>
+            <li>必要任务是独立门槛，不参与加权；唯一主力机角色下，任一必要任务未达标即标注未满足。</li>
+            <li>备用机只缓解标有“故障恢复”“停机后果”的两项：得分向 5 分靠近所设比例，不改变 App 适配、Bug 或硬件可靠性。</li>
+            <li>新鲜感情景只缩放该项两机之间的差距：保持 100%、减半 50%、明显消退 20%，不影响审美与材质。</li>
+            <li>软件情景只缩小 Duo 在“任务可用性”“交互省心”上与 18 Pro Max 的差距；改善幅度由你设定，不代表一定会发生。</li>
+            <li>敏感性分析一次只变一个量：软件差距、某个大类权重（其余未锁定大类按比例变化）、新鲜感、备用机。</li>
+            <li>评分 1–5；成本类 5 表示负担小。价格与残值请自行判断后评分，已付出的钱不计入。</li>
+          </ul>
+        </details>
       </section>
 
       <section class="results" aria-label="评分结果">
         <div class="res">
           <h2>总分（满分 5）</h2>
           <div class="totals">
-            <div class="tot pm" id="tot-pm"><div class="tl">18 Pro Max</div><div class="tn" id="tn-pm">0.00</div><div class="meter"><i id="m-pm"></i></div></div>
-            <div class="tot duo" id="tot-duo"><div class="tl">Duo</div><div class="tn" id="tn-duo">0.00</div><div class="meter"><i id="m-duo"></i></div></div>
+            <div class="tot pm" id="tot-pm"><div class="tl">18 Pro Max</div><div class="tn" id="tn-pm">0.00</div><div class="meter"><i id="m-pm"></i></div><div id="gt-pm"></div></div>
+            <div class="tot duo" id="tot-duo"><div class="tl">Duo</div><div class="tn" id="tn-duo">0.00</div><div class="meter"><i id="m-duo"></i></div><div id="gt-duo"></div></div>
           </div>
           <p class="verdict" id="verdict"></p>
+          <p class="tags" id="tags"></p>
         </div>
 
         <div class="res">
@@ -311,7 +336,7 @@ button.grow .nm { font-weight: 600; }
 
         <div class="res">
           <h2>结论有多稳</h2>
-          <p class="sens" id="sens"></p>
+          <div id="sens"></div>
         </div>
       </section>
     </div>
@@ -333,118 +358,59 @@ button.grow .nm { font-weight: 600; }
 
 <script>
 (function () {
-  /* ---------- defaults ---------- */
+  /* ---------- definitions ---------- */
+  var ROLES = [
+    { id: 'solo', label: '唯一主力机' },
+    { id: 'backup', label: '有备用机的主力机' },
+    { id: 'second', label: '第二台体验设备' }
+  ];
+  var PROFILES = {
+    solo: { daily: 35, own: 20, assure: 30, cost: 15 },
+    backup: { daily: 35, own: 25, assure: 20, cost: 20 },
+    second: { daily: 20, own: 40, assure: 10, cost: 30 }
+  };
+  var NOVS = [{ id: 'keep', label: '保持', f: 1 }, { id: 'half', label: '减半', f: 0.5 }, { id: 'fade', label: '明显消退', f: 0.2 }];
+  var SOFTS = [{ id: 'now', label: '现状' }, { id: 'part', label: '部分改善' }, { id: 'custom', label: '自设' }];
+  var STATUS = [['', '—'], ['ok', '可独立完成'], ['cost', '代价不可接受'], ['dev', '须借助另一台']];
+  var TASKS0 = ['微信', '抖音', '通信', '支付', '导航'];
+
+  var ITEMS = {
+    task: { n: '高频任务可用性', s: '任务可用', soft: 1, pm: 5, duo: 1.5, h: '微信、抖音、通信、支付、导航等必要任务能否正常完成；App 无法全屏也算在这里' },
+    fric: { n: '交互省心程度', s: '交互省心', soft: 1, pm: 5, duo: 2.5, c: 1, h: 'Bug、方向切换、重试、绕路与跨应用使用的可预期性' },
+    phys: { n: '物理使用舒适度', s: '物理舒适', pm: null, duo: null, h: '重量、握持、携带、躺姿、展开动作与单双手操作' },
+    batt: { n: '续航与充电负担', s: '续航', pm: 4.5, duo: 3, h: '续航与充电的负担' },
+    cam: { n: '实际影像满意度', s: '影像', pm: 5, duo: 3, c: 1, h: '按你的拍摄需求评价，不按参数多少判断' },
+    aes: { n: '审美与材质愉悦', s: '审美材质', pm: 3.5, duo: 5, h: '外观、工艺、钛金属质感、精致手感，以及欣赏和把玩的快乐' },
+    disp: { n: '展开大屏价值', s: '大屏', pm: 3, duo: 5, c: 1, h: '结合实际使用频率、替代方案和收益，不因拥有这个功能就给高分' },
+    split: { n: '分屏与多任务价值', s: '分屏', pm: 1, duo: 4.5, c: 1, h: '结合实际使用频率、替代方案和收益' },
+    half: { n: '半折叠与 StandBy 价值', s: '半折叠', pm: 1, duo: 4.5, c: 1, h: '半折叠形态及 StandBy 等独特功能，结合使用频率和收益' },
+    nov: { n: '新鲜感（短期兴奋）', s: '新鲜感', nov: 1, pm: 3, duo: 5, h: '短期兴奋；随新鲜感情景缩放，不影响审美与材质' },
+    trust: { n: '硬件可靠性信任', s: '可靠信任', pm: 5, duo: 2, c: 1, h: '你对结构、屏幕等长期稳定性的主观判断，不等于客观故障率' },
+    recov: { n: '故障后恢复便利', s: '故障恢复', mit: 1, pm: null, duo: null, h: '维修、换机、数据、账号及通信恢复的负担' },
+    down: { n: '停机后果', s: '停机后果', mit: 1, pm: null, duo: null, h: '无备用机时，停机对必要事务的影响；与故障发生的可能性分开评价' },
+    newc: { n: '今日起新增成本', s: '新增成本', pm: null, duo: null, h: '从今天开始需要新增承担的成本，5 = 负担小；已付出的钱不计入' },
+    extra: { n: '额外设备与配件服务', s: '额外成本', pm: null, duo: null, h: '额外设备、配件及服务成本，5 = 负担小' },
+    exit: { n: '折旧与退出成本', s: '退出成本', pm: 4, duo: 3, c: 1, h: '未来折旧、换机与退出成本，5 = 负担小；价格与残值请自行判断' }
+  };
   var DEF = [
-    { k: 'soft', name: '软件与系统体验', hint: '可以通过苹果的软件更新改善的部分', w: 32, items: [
-      { k: 'app', name: '第三方 App 适配', s: 'App 适配', w: 15, pm: 5, duo: 1.5,
-        hint: '抖音完全没有适配，连全屏看视频都不行；微信适配也很差。每打开一个 App 都要赌一次它适不适配。' },
-      { k: 'stab', name: '系统稳定性与 BUG', s: '稳定性', w: 11, pm: 5, duo: 2.5,
-        hint: '软件层面：Duo 上经常出现 bug；18PM 像一个可靠的老伙计。' },
-      { k: 'rot', name: '自动旋转与躺姿使用', s: '旋转逻辑', w: 6, pm: 4.5, duo: 2,
-        hint: '躺着玩手机要经常调转方向，自动判断转向的逻辑也让人抓狂。' }
-    ] },
-    { k: 'hard', name: '硬件与工艺', hint: '硬件层面的差异，软件更新改变不了', w: 37, items: [
-      { k: 'hw', name: '硬件可靠性与返修风险', s: '硬件可靠', w: 12, pm: 5, duo: 2,
-        hint: '你提到 Duo 的屏幕问题已被大规模披露。这类工艺隐患可能影响日常使用，甚至让你一段时间没有手机可用。这一项看返修风险和停机后果。' },
-      { k: 'cam', name: '摄影', s: '摄影', w: 8, pm: 5, duo: 3,
-        hint: '18PM 是成熟的旗舰摄影配置。' },
-      { k: 'face', name: 'Face ID', s: 'Face ID', w: 5, pm: 5, duo: 3,
-        hint: '18PM 的 Face ID 很成熟。' },
-      { k: 'bat', name: '续航', s: '续航', w: 7, pm: 4.5, duo: 3,
-        hint: '18PM 的续航有优势。Duo 的分数是占位，等你各用一整天实测后再改。' },
-      { k: 'mat', name: '材质工艺与手感', s: '材质手感', w: 5, pm: 3.5, duo: 5,
-        hint: 'Duo 的钛金属边框工艺是你更喜欢的，手感和外观精致得像玩具。18PM 的分是占位，请按你握在手里的对比来改。' }
-    ] },
-    { k: 'form', name: '新形态体验', hint: '折叠形态带来的独特体验', w: 18, items: [
-      { k: 'disp', name: '展开大屏体验', s: '大屏体验', w: 9, pm: 3, duo: 5,
-        hint: '展开后的大屏体验很独特，显示效果也很惊艳。大屏在 App 没适配时用不上的部分，已经在「App 适配」里扣过，这里只评能用上时的体验。' },
-      { k: 'excl', name: '独占功能', s: '独占功能', w: 6, pm: 1, duo: 4.5,
-        hint: '分屏多任务，半折叠形态下独特的 StandBy 设计。偶尔用到会很开心，18PM 没有这些。' },
-      { k: 'nov', name: '新形态的新鲜感', s: '新鲜感', w: 3, pm: 3, duo: 5,
-        hint: '新形态带来的新鲜感。它通常会随时间衰减，可以只给三个月后仍然保留的那一部分打分。' }
-    ] },
-    { k: 'life', name: '适应与长期', hint: '个人适应成本与长期持有', w: 13, items: [
-      { k: 'adapt', name: '日常适应成本', s: '适应成本', w: 6, pm: 5, duo: 2,
-        hint: '从 17PM 换到 18PM 几乎不用适应；Duo 用了十天，仍有很多地方不适应。' },
-      { k: 'long', name: '长期价值', s: '长期价值', w: 7, pm: 4, duo: 3,
-        hint: '保值、配件、系统支持。Duo 的 App 适配以后可能改善，也可能没有，这一项请按你的判断调整。' }
-    ] }
+    { k: 'daily', name: '日常使用质量', keys: ['task', 'fric', 'phys', 'batt', 'cam'] },
+    { k: 'own', name: '独特体验与拥有价值', keys: ['aes', 'disp', 'split', 'half', 'nov'] },
+    { k: 'assure', name: '使用保障', keys: ['trust', 'recov', 'down'] },
+    { k: 'cost', name: '持有成本与灵活性', keys: ['newc', 'extra', 'exit'] }
   ];
-  var META = {};
-  DEF.forEach(function (g) {
-    META[g.k] = { hint: g.hint };
-    g.items.forEach(function (it) { META[it.k] = { s: it.s, hint: it.hint }; });
-  });
-  var PRESETS = [
-    { id: 'main', label: '当唯一主力机', w: { soft: 32, hard: 37, form: 18, life: 13 } },
-    { id: 'fun', label: '偏重体验乐趣', w: { soft: 16, hard: 34, form: 41, life: 9 } },
-    { id: 'even', label: '均衡', w: { soft: 25, hard: 25, form: 25, life: 25 } }
-  ];
-  var KEY = 'phone-matrix-v3';
+  var KEY = 'phone-matrix-v4', OLDKEY = 'phone-matrix-v3';
   var uid = 0;
   function nid(p) { uid++; return p + uid; }
-
-  function defaults() {
-    uid = 0;
-    return { groups: DEF.map(function (g) {
-      var sum = g.items.reduce(function (a, it) { return a + it.w; }, 0);
-      return { id: nid('g'), k: g.k, name: g.name, w: g.w, items: g.items.map(function (it) {
-        return { id: nid('i'), k: it.k, name: it.name, w: it.w * 100 / sum, pm: it.pm, duo: it.duo };
-      }) };
-    }) };
-  }
-
-  /* ---------- state + persistence ---------- */
-  function num(v, lo, hi) { return typeof v === 'number' && isFinite(v) && v >= lo && v <= hi; }
-  function validState(st) {
-    if (!st || !Array.isArray(st.groups) || !st.groups.length || st.groups.length > 12) return false;
-    var gs = 0, i, keys = {};
-    for (i = 0; i < st.groups.length; i++) {
-      var g = st.groups[i];
-      if (!g || typeof g.id !== 'string' || typeof g.name !== 'string' || !num(g.w, 0, 100)) return false;
-      if (!Array.isArray(g.items) || !g.items.length || g.items.length > 20) return false;
-      var is = 0;
-      for (var j = 0; j < g.items.length; j++) {
-        var it = g.items[j];
-        if (!it || typeof it.id !== 'string' || typeof it.name !== 'string' || !num(it.w, 0, 100) || !num(it.pm, 1, 5) || !num(it.duo, 1, 5)) return false;
-        if (it.k && !META[it.k]) return false;
-        is += it.w;
-      }
-      if (Math.abs(is - 100) > 0.5) return false;
-      gs += g.w;
-      if (g.k) keys[g.k] = true;
-    }
-    if (Math.abs(gs - 100) > 0.5) return false;
-    return true;
-  }
-  var S = defaults();
-  try {
-    var raw = localStorage.getItem(KEY);
-    if (raw) {
-      var p = JSON.parse(raw);
-      if (validState(p)) {
-        S = p;
-        p.groups.forEach(function (g) {
-          g.name = g.name.slice(0, 20);
-          var m = /(\d+)$/.exec(g.id); if (m) uid = Math.max(uid, +m[1]);
-          g.items.forEach(function (it) { it.name = it.name.slice(0, 20); var n2 = /(\d+)$/.exec(it.id); if (n2) uid = Math.max(uid, +n2[1]); });
-        });
-      }
-    }
-  } catch (e) {}
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
   /* ---------- helpers ---------- */
   function $(id) { return document.getElementById(id); }
   function f2(x) { return x.toFixed(2); }
   function sgn(x) { return (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(2); }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function tip(t) { return t ? ' title="' + esc(t) + '"' : ''; }
   function sum(a) { return a.reduce(function (x, y) { return x + y; }, 0); }
-  function short(it) { return it.k ? META[it.k].s : (it.name.length > 6 ? it.name.slice(0, 6) + '…' : it.name) || '未命名'; }
-  function nameOf(x) { return x.name || '未命名'; }
-
-  /* largest-remainder rounding: integers that add up to `total` */
+  function num(v, lo, hi) { return typeof v === 'number' && isFinite(v) && v >= lo && v <= hi; }
+  function sc1(v) { return v === null || num(v, 1, 5); }
+  function tip(t) { return t ? ' title="' + esc(t) + '"' : ''; }
   function lrm(ws, total) {
     var fl = ws.map(function (w) { return Math.floor(w + 1e-9); });
     var rem = total - sum(fl);
@@ -452,72 +418,319 @@ button.grow .nm { font-weight: 600; }
     for (var k = 0; k < rem && k < order.length; k++) fl[order[k][1]]++;
     return fl;
   }
-  /* set one share to v; the others keep their ratios and absorb the rest.
-     Each remembers its ratio (r) so proportions return after an extreme drag. */
+  function short(it) {
+    var K = it.k && ITEMS[it.k];
+    if (K && it.name === K.n) return K.s;
+    var n = it.name || '未命名';
+    return n.length > 6 ? n.slice(0, 6) + '…' : n;
+  }
+  function counted(it) { return it.on !== false && it.pm !== null && it.duo !== null; }
+  function pending(it) { return it.on !== false && (it.pm === null || it.duo === null); }
+  function mkItem(k) {
+    var K = ITEMS[k];
+    return { id: nid('i'), k: k, name: K.n, w: 0, pm: K.pm, duo: K.duo, c: K.c ? 1 : 0, on: true, lock: false };
+  }
+  function roleLabel() { return ROLES.filter(function (r) { return r.id === S.role; })[0].label; }
+
+  /* ---------- state ---------- */
+  function defaults() {
+    uid = 0;
+    var groups = DEF.map(function (g) {
+      var items = g.keys.map(mkItem);
+      items.forEach(function (it) { it.w = 100 / items.length; });
+      if (g.k === 'daily') items.push({ id: nid('i'), k: '', name: 'Face ID', w: 0, pm: 5, duo: 3, c: 0, on: false, lock: false });
+      return { id: nid('g'), k: g.k, name: g.name, w: 0, lock: false, items: items };
+    });
+    var st = { role: 'solo', nov: 'keep', soft: 'now', softX: 50, mit: 60, groups: groups, ws: {}, tasks: [] };
+    ROLES.forEach(function (r) {
+      st.ws[r.id] = {};
+      groups.forEach(function (g) { st.ws[r.id][g.id] = PROFILES[r.id][g.k]; });
+    });
+    groups.forEach(function (g) { g.w = st.ws.solo[g.id]; });
+    TASKS0.forEach(function (n) { st.tasks.push({ id: nid('t'), name: n, on: true, pm: '', duo: '' }); });
+    return st;
+  }
+  function validState(st) {
+    if (!st || typeof st !== 'object') return false;
+    if (!ROLES.some(function (r) { return r.id === st.role; })) return false;
+    if (!NOVS.some(function (n) { return n.id === st.nov; }) || !SOFTS.some(function (n) { return n.id === st.soft; })) return false;
+    if (!num(st.softX, 0, 100) || !num(st.mit, 0, 100)) return false;
+    if (!Array.isArray(st.groups) || !st.groups.length || st.groups.length > 12) return false;
+    var gs = 0, i, j;
+    for (i = 0; i < st.groups.length; i++) {
+      var g = st.groups[i];
+      if (!g || typeof g.id !== 'string' || typeof g.name !== 'string' || !num(g.w, 0, 100)) return false;
+      if (!Array.isArray(g.items) || !g.items.length || g.items.length > 20) return false;
+      var is = 0;
+      for (j = 0; j < g.items.length; j++) {
+        var it = g.items[j];
+        if (!it || typeof it.id !== 'string' || typeof it.name !== 'string' || !num(it.w, 0, 100) || !sc1(it.pm) || !sc1(it.duo)) return false;
+        if (it.k && !ITEMS[it.k]) return false;
+        is += it.w;
+      }
+      if (Math.abs(is - 100) > 0.5) return false;
+      gs += g.w;
+    }
+    if (Math.abs(gs - 100) > 0.5) return false;
+    if (!Array.isArray(st.tasks) || st.tasks.length > 20) return false;
+    var okS = ['', 'ok', 'cost', 'dev'];
+    for (i = 0; i < st.tasks.length; i++) {
+      var t = st.tasks[i];
+      if (!t || typeof t.id !== 'string' || typeof t.name !== 'string' || okS.indexOf(t.pm) < 0 || okS.indexOf(t.duo) < 0) return false;
+    }
+    return !!st.ws && typeof st.ws === 'object';
+  }
+  function repair(st) {
+    st.groups.forEach(function (g) {
+      g.name = g.name.slice(0, 20);
+      var m = /(\d+)$/.exec(g.id); if (m) uid = Math.max(uid, +m[1]);
+      g.items.forEach(function (it) { it.name = it.name.slice(0, 20); var n2 = /(\d+)$/.exec(it.id); if (n2) uid = Math.max(uid, +n2[1]); });
+    });
+    st.tasks.forEach(function (t) { t.name = t.name.slice(0, 20); t.on = t.on !== false; var m = /(\d+)$/.exec(t.id); if (m) uid = Math.max(uid, +m[1]); });
+    ROLES.forEach(function (r) {
+      var w = st.ws[r.id], ok = w && typeof w === 'object';
+      if (ok) {
+        var tot = 0;
+        st.groups.forEach(function (g) { if (!num(w[g.id], 0, 100)) ok = false; else tot += w[g.id]; });
+        if (ok && Math.abs(tot - 100) > 0.5) ok = false;
+      }
+      if (!ok) { st.ws[r.id] = {}; st.groups.forEach(function (g) { st.ws[r.id][g.id] = g.w; }); }
+    });
+    var cur = {}; st.groups.forEach(function (g) { cur[g.id] = g.w; });
+    st.ws[st.role] = cur;
+  }
+
+  /* weights */
+  function lockedSum(arr, skip) { var t = 0; arr.forEach(function (x, i) { if (i !== skip && x.lock) t += x.w; }); return t; }
+  function capOf(arr, k, total) { return total - lockedSum(arr, k); }
+  function canAdjust(arr, k) { return !arr[k].lock && arr.some(function (x, j) { return j !== k && !x.lock; }); }
   function setShare(arr, k, v, total) {
-    v = Math.max(0, Math.min(total, Math.round(v)));
-    if (arr.length === 1) { arr[0].w = total; return; }
-    var others = arr.filter(function (_, j) { return j !== k; });
-    var O = sum(others.map(function (x) { return x.w; })), R = total - v;
-    if (O > 1e-9) others.forEach(function (x) { x.r = x.w; });
-    else others.forEach(function (x) { if (!(x.r > 0)) x.r = 1; });
-    var Rs = sum(others.map(function (x) { return x.r; }));
+    if (!canAdjust(arr, k)) return;
+    var cap = capOf(arr, k, total);
+    v = Math.max(0, Math.min(Math.floor(cap + 1e-9), Math.round(v)));
+    var free = arr.filter(function (x, j) { return j !== k && !x.lock; });
+    var O = sum(free.map(function (x) { return x.w; })), R = cap - v;
+    if (O > 1e-9) free.forEach(function (x) { x.r = x.w; });
+    else free.forEach(function (x) { if (!(x.r > 0)) x.r = 1; });
+    var Rs = sum(free.map(function (x) { return x.r; }));
     arr[k].w = v;
-    others.forEach(function (x) { x.w = Rs > 0 ? R * x.r / Rs : R / others.length; });
+    free.forEach(function (x) { x.w = Rs > 0 ? R * x.r / Rs : R / free.length; });
   }
-  function normalize(arr, total) {
-    var s = sum(arr.map(function (x) { return x.w; }));
-    if (s <= 1e-9) arr.forEach(function (x) { x.w = total / arr.length; });
-    else arr.forEach(function (x) { x.w = x.w * total / s; });
-    arr.forEach(function (x) { x.r = x.w; });
+  /* after a removal: free items take the leftover; if everything left is locked and short of the total, release the locks */
+  function rebalance(arr, total) {
+    var released = false;
+    var free = arr.filter(function (x) { return !x.lock; });
+    var L = sum(arr.filter(function (x) { return x.lock; }).map(function (x) { return x.w; }));
+    if (!free.length && arr.length && Math.abs(L - total) > 0.5) {
+      arr.forEach(function (x) { x.lock = false; });
+      free = arr.slice(); L = 0; released = true;
+    }
+    var U = total - L, Fs = sum(free.map(function (x) { return x.w; }));
+    free.forEach(function (x) { x.w = Fs > 1e-9 ? x.w * U / Fs : U / free.length; x.r = x.w; });
+    return released;
   }
+  function addShare(arr, obj, total) {
+    var n = arr.length, free = arr.filter(function (x) { return !x.lock; });
+    var L = sum(arr.filter(function (x) { return x.lock; }).map(function (x) { return x.w; })), U = total - L;
+    var nw = free.length ? Math.min(total / (n + 1), U) : 0;
+    var Fs = sum(free.map(function (x) { return x.w; }));
+    free.forEach(function (x) { x.w = Fs > 1e-9 ? x.w * (U - nw) / Fs : (U - nw) / free.length; x.r = x.w; });
+    obj.w = nw; arr.push(obj);
+  }
+  function wsOf() { var o = {}; S.groups.forEach(function (g) { o[g.id] = g.w; }); return o; }
+  function stash() { S.ws[S.role] = wsOf(); }
+  function wsAdd(id, m) {
+    ROLES.forEach(function (r) {
+      if (r.id === S.role) return;
+      var w = S.ws[r.id]; Object.keys(w).forEach(function (k) { w[k] = w[k] * m / (m + 1); }); w[id] = 100 / (m + 1);
+    });
+  }
+  function wsDel(id) {
+    ROLES.forEach(function (r) {
+      if (r.id === S.role) return;
+      var w = S.ws[r.id]; delete w[id];
+      var ks = Object.keys(w), s = sum(ks.map(function (k) { return w[k]; }));
+      ks.forEach(function (k) { w[k] = s > 1e-9 ? w[k] * 100 / s : 100 / ks.length; });
+    });
+  }
+
   function findG(id) { for (var i = 0; i < S.groups.length; i++) if (S.groups[i].id === id) return i; return -1; }
   function findI(id) {
     for (var i = 0; i < S.groups.length; i++)
       for (var j = 0; j < S.groups[i].items.length; j++) if (S.groups[i].items[j].id === id) return { gi: i, ii: j };
     return null;
   }
+  function findK(st, k) {
+    for (var i = 0; i < st.groups.length; i++)
+      for (var j = 0; j < st.groups[i].items.length; j++) if (st.groups[i].items[j].k === k) return st.groups[i].items[j];
+    return null;
+  }
 
-  function flat() {
-    var out = [];
-    S.groups.forEach(function (g, gi) {
-      g.items.forEach(function (it) { out.push({ it: it, g: g, gi: gi, eff: g.w * it.w / 100, pm: it.pm, duo: it.duo, s: short(it) }); });
+  /* carry scores over from the previous version; anything that no longer maps one-to-one is flagged for confirmation */
+  function migrate(o) {
+    if (!o || !Array.isArray(o.groups)) return null;
+    var s = defaults(), found = {}, custom = [];
+    o.groups.forEach(function (g) {
+      (g && g.items || []).forEach(function (it) {
+        if (!it || !sc1(it.pm) || !sc1(it.duo) || it.pm === null || it.duo === null) return;
+        if (it.k) found[it.k] = it;
+        else custom.push({ n: ((g.k ? '' : (g.name || '') + '·') + (it.name || '')).slice(0, 20), pm: it.pm, duo: it.duo });
+      });
     });
-    return out;
-  }
-  function sumEff(F) { return sum(F.map(function (x) { return x.eff; })); }
-  function total(F, key) {
-    var W = sumEff(F); if (W <= 0) return 0;
-    return sum(F.map(function (x) { return x.eff * x[key]; })) / W;
-  }
-  function contribs(F) {
-    var W = sumEff(F);
-    return F.map(function (x) { return W > 0 ? x.eff * (x.pm - x.duo) / W : 0; });
+    function put(k, src, c) { var t = findK(s, k); if (t && src) { t.pm = src.pm; t.duo = src.duo; t.c = c ? 1 : 0; } }
+    function h(x) { return Math.round(x * 2) / 2; }
+    put('task', found.app, 0); put('batt', found.bat, 0); put('aes', found.mat, 0); put('nov', found.nov, 0);
+    put('cam', found.cam, 1); put('disp', found.disp, 1); put('split', found.excl, 1); put('half', found.excl, 1);
+    put('trust', found.hw, 1); put('exit', found.long, 1);
+    if (found.stab && found.rot) put('fric', { pm: h((found.stab.pm + found.rot.pm) / 2), duo: h((found.stab.duo + found.rot.duo) / 2) }, 1);
+    else put('fric', found.stab || found.rot, 1);
+    var face = found.face; if (face) { var f = findK(s, ''); if (f) { f.pm = face.pm; f.duo = face.duo; } }
+    var daily = s.groups[0];
+    custom.forEach(function (c) {
+      if (daily.items.length >= 20) return;
+      addShare(daily.items, { id: nid('i'), k: '', name: c.n, w: 0, pm: c.pm, duo: c.duo, c: 1, on: false, lock: false }, 100);
+    });
+    return s;
   }
 
-  /* ---------- build inputs ---------- */
+  var S = null;
+  try {
+    var raw = localStorage.getItem(KEY);
+    if (raw) { var p = JSON.parse(raw); if (validState(p)) { S = p; repair(p); } }
+    else {
+      var oldRaw = localStorage.getItem(OLDKEY);
+      if (oldRaw) { var m = migrate(JSON.parse(oldRaw)); if (m && validState(m)) { S = m; repair(m); } }
+    }
+  } catch (e) { S = null; }
+  if (!S) S = defaults();
+  function save() { try { stash(); localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+  /* ---------- scoring ---------- */
+  function scen(over) {
+    var o = {
+      f: NOVS.filter(function (n) { return n.id === S.nov; })[0].f,
+      x: S.soft === 'now' ? 0 : (S.soft === 'part' ? 0.5 : S.softX / 100),
+      backup: S.role === 'backup',
+      m: S.mit / 100
+    };
+    if (over) Object.keys(over).forEach(function (k) { o[k] = over[k]; });
+    return o;
+  }
+  function es(it, sc) {
+    var a = it.pm, b = it.duo, K = (it.k && ITEMS[it.k]) || {};
+    if (K.nov) { var mid = (a + b) / 2; a = mid + (a - mid) * sc.f; b = mid + (b - mid) * sc.f; }
+    if (K.soft) {
+      if (sc.x >= 0) { if (a > b) b = b + sc.x * (a - b); }
+      else b = Math.max(1, b + sc.x * (b - 1));
+    }
+    if (K.mit && sc.backup) { a += (5 - a) * sc.m; b += (5 - b) * sc.m; }
+    return { pm: a, duo: b };
+  }
+  /* Totals. Pending or switched-off items drop out; a category's weight stays and its counted items share it. */
+  function calc(sc, gwo) {
+    var gs = [], F = [], W = 0;
+    S.groups.forEach(function (g) {
+      var w = gwo ? gwo[g.id] : g.w, its = [], sw = 0;
+      g.items.forEach(function (it) {
+        if (counted(it)) { var e = es(it, sc); its.push({ it: it, pm: e.pm, duo: e.duo }); sw += it.w; }
+      });
+      if (its.length) {
+        its.forEach(function (x) { x.sh = sw > 1e-9 ? x.it.w / sw : 1 / its.length; });
+        gs.push({ g: g, w: w, its: its }); W += w;
+      }
+    });
+    if (!gs.length) return { pm: 0, duo: 0, F: [], gs: [], ok: false };
+    var tp = 0, td = 0;
+    gs.forEach(function (G) {
+      var gw = W > 1e-9 ? G.w / W : 1 / gs.length;
+      G.gw = gw; G.pm = 0; G.duo = 0;
+      G.its.forEach(function (x) {
+        G.pm += x.sh * x.pm; G.duo += x.sh * x.duo;
+        x.eff = gw * x.sh; x.g = G.g; x.s = short(x.it); x.c = x.eff * (x.pm - x.duo);
+        F.push(x);
+      });
+      G.c = gw * (G.pm - G.duo);
+      tp += gw * G.pm; td += gw * G.duo;
+    });
+    return { pm: tp, duo: td, F: F, gs: gs, ok: true };
+  }
+  function dOf(r) { return r.pm - r.duo; }
+
+  /* ---------- gate ---------- */
+  function gateInfo() {
+    var res = { pm: { bad: [], pend: 0 }, duo: { bad: [], pend: 0 }, n: 0 };
+    S.tasks.forEach(function (t) {
+      if (!t.on) return;
+      res.n++;
+      ['pm', 'duo'].forEach(function (p) {
+        var v = t[p];
+        if (!v) res[p].pend++; else if (v !== 'ok') res[p].bad.push(t.name || '未命名');
+      });
+    });
+    return res;
+  }
+  function gateHtml(G) {
+    if (S.role === 'second' || !G.n) return '';
+    if (G.bad.length) {
+      var nm = esc(G.bad.join('、'));
+      return S.role === 'solo'
+        ? '<div class="gate bad"><b>未满足唯一主力机要求</b>　' + nm + '</div>'
+        : '<div class="gate info"><b>需备用机承担 ' + G.bad.length + ' 项</b>　' + nm + '</div>';
+    }
+    if (G.pend) return '<div class="gate pending">任务待标记 ' + G.pend + ' 项</div>';
+    return S.role === 'solo' ? '<div class="gate ok">满足唯一主力机要求</div>' : '';
+  }
+
+  /* ---------- inputs ---------- */
+  var openIn = {};
+  var lockSvg = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>';
+  function statusOpts(v) {
+    return STATUS.map(function (s) { return '<option value="' + s[0] + '"' + (s[0] === v ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('');
+  }
+  function buildGate() {
+    var open = !!openIn.gate;
+    var h = '<section class="grp"><div class="grp-head"><div class="grp-top">' +
+      '<button type="button" class="gtog wide' + (open ? ' open' : '') + '" data-toggle-gate="1" aria-expanded="' + open + '"><i class="chev"></i><span>必要任务</span></button>' +
+      '<span class="gsum" id="gsum"></span></div></div>' +
+      '<div class="grp-body"' + (open ? '' : ' hidden') + '>';
+    h += '<div class="tcap" aria-hidden="true"><span></span><span></span><span class="pm">18 Pro Max</span><span class="duo">Duo</span><span></span></div>';
+    S.tasks.forEach(function (t) {
+      h += '<div class="trow' + (t.on ? '' : ' off') + '" id="tr-' + t.id + '">' +
+        '<input type="checkbox" class="ck" data-ck-t="' + t.id + '"' + (t.on ? ' checked' : '') + ' aria-label="作为必要任务">' +
+        '<input class="nm-in" type="text" maxlength="20" value="' + esc(t.name) + '" data-name-t="' + t.id + '" placeholder="任务名称" aria-label="任务名称">' +
+        '<select class="pm" data-sel-t="' + t.id + '" data-p="pm" aria-label="18 Pro Max 完成情况">' + statusOpts(t.pm) + '</select>' +
+        '<select class="duo" data-sel-t="' + t.id + '" data-p="duo" aria-label="Duo 完成情况">' + statusOpts(t.duo) + '</select>' +
+        '<button type="button" class="ib x" data-del-t="' + t.id + '" aria-label="删除任务">×</button></div>';
+    });
+    h += '<button type="button" class="add" data-add-t="1">+ 添加任务</button></div></section>';
+    $('gate').innerHTML = h;
+  }
   function buildInputs() {
     var h = '';
-    S.groups.forEach(function (g) {
-      var custom = !g.k, open = !!openIn[g.id], n = g.items.length;
+    S.groups.forEach(function (g, gi) {
+      var open = !!openIn[g.id], n = g.items.length;
       h += '<section class="grp" data-g="' + g.id + '"><div class="grp-head"><div class="grp-top">' +
-        (custom
-          ? '<button type="button" class="gtog chev-only' + (open ? ' open' : '') + '" data-toggle-g="' + g.id + '" aria-expanded="' + open + '" aria-label="展开或收起"><i class="chev"></i></button>' +
-            '<input class="nm-in" type="text" maxlength="20" value="' + esc(g.name) + '" data-name-g="' + g.id + '" placeholder="分组名称" aria-label="分组名称">'
-          : '<button type="button" class="gtog' + (open ? ' open' : '') + '" data-toggle-g="' + g.id + '" aria-expanded="' + open + '"><i class="chev"></i><span class="gname"' + tip(META[g.k].hint) + '>' + esc(g.name) + '</span></button>') +
-        '<span class="gcount">' + n + ' 项</span>' +
+        '<button type="button" class="gtog' + (open ? ' open' : '') + '" data-toggle-g="' + g.id + '" aria-expanded="' + open + '" aria-label="展开或收起"><i class="chev"></i></button>' +
+        '<input class="nm-in" type="text" maxlength="20" value="' + esc(g.name) + '" data-name-g="' + g.id + '" placeholder="分组名称" aria-label="分组名称">' +
+        '<span class="gcount" id="gc-' + g.id + '"></span>' +
         '<output class="gout" id="ogw-' + g.id + '"></output>' +
-        (S.groups.length > 1 ? '<button type="button" class="x" data-del-g="' + g.id + '" aria-label="删除分组">×</button>' : '') +
+        '<button type="button" class="ib lk" data-lock-g="' + g.id + '" aria-pressed="false" aria-label="锁定权重" title="锁定权重">' + lockSvg + '</button>' +
+        (S.groups.length > 1 ? '<button type="button" class="ib x" data-del-g="' + g.id + '" aria-label="删除分组">×</button>' : '') +
         '</div><input type="range" id="gw-' + g.id + '" min="0" max="100" step="1" aria-label="分组权重"></div><div class="grp-body"' + (open ? '' : ' hidden') + '>';
-      g.items.forEach(function (it) {
-        h += '<div class="dim"><div class="dim-head">' +
-          (it.k ? '<h3' + tip(META[it.k].hint) + '>' + esc(it.name) + '</h3>'
-                : '<input class="nm-in" type="text" maxlength="20" value="' + esc(it.name) + '" data-name-i="' + it.id + '" placeholder="项目名称" aria-label="项目名称">') +
-          '<span class="dim-r"><span class="share" id="share-' + it.id + '"></span>' +
-          (n > 1 ? '<button type="button" class="x" data-del-i="' + it.id + '" aria-label="删除项目">×</button>' : '') +
+      g.items.forEach(function (it, ii) {
+        var K = it.k && ITEMS[it.k];
+        h += '<div class="dim" id="d-' + it.id + '"><div class="dim-head">' +
+          '<input type="checkbox" class="ck" id="ck-' + it.id + '" aria-label="计入总分">' +
+          '<input class="nm-in" type="text" maxlength="20" value="' + esc(it.name) + '" data-name-i="' + it.id + '" placeholder="项目名称" aria-label="项目名称"' + tip(K ? K.h : '') + '>' +
+          '<span class="dim-r"><span class="bdg" id="bp-' + it.id + '"></span><button type="button" class="bdg" id="bc-' + it.id + '" data-confirm="' + it.id + '" title="点击确认当前评分" hidden>待确认</button>' +
+          '<span class="share" id="share-' + it.id + '"></span>' +
+          '<button type="button" class="ib lk" data-lock-i="' + it.id + '" aria-pressed="false" aria-label="锁定权重" title="锁定权重">' + lockSvg + '</button>' +
+          '<button type="button" class="ib" data-mv="' + it.id + '" data-dir="-1" aria-label="上移"' + (gi === 0 && ii === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button type="button" class="ib" data-mv="' + it.id + '" data-dir="1" aria-label="下移"' + (gi === S.groups.length - 1 && ii === n - 1 ? ' disabled' : '') + '>↓</button>' +
+          (n > 1 ? '<button type="button" class="ib x" data-del-i="' + it.id + '" aria-label="删除项目">×</button>' : '') +
           '</span></div><div class="sliders">' +
-          '<label class="s pm" for="pm-' + it.id + '"><span>18 Pro Max</span><output id="o-pm-' + it.id + '"></output><input type="range" id="pm-' + it.id + '" min="1" max="5" step="0.5"></label>' +
-          '<label class="s duo" for="duo-' + it.id + '"><span>Duo</span><output id="o-duo-' + it.id + '"></output><input type="range" id="duo-' + it.id + '" min="1" max="5" step="0.5"></label>' +
+          '<label class="s pm" id="lp-' + it.id + '" for="pm-' + it.id + '"><span>18 Pro Max</span><output id="o-pm-' + it.id + '"></output><input type="range" id="pm-' + it.id + '" min="1" max="5" step="0.5" data-pend="1"></label>' +
+          '<label class="s duo" id="ld-' + it.id + '" for="duo-' + it.id + '"><span>Duo</span><output id="o-duo-' + it.id + '"></output><input type="range" id="duo-' + it.id + '" min="1" max="5" step="0.5" data-pend="1"></label>' +
           '<label class="s w" for="iw-' + it.id + '"><span>组内权重</span><output id="o-iw-' + it.id + '"></output><input type="range" id="iw-' + it.id + '" min="0" max="100" step="1"></label>' +
           '</div></div>';
       });
@@ -526,61 +739,101 @@ button.grow .nm { font-weight: 600; }
     h += '<button type="button" class="add" id="add-g">+ 添加分组</button>';
     $('dims').innerHTML = h;
   }
-
-  var presetHtml = '';
-  PRESETS.forEach(function (p) { presetHtml += '<button type="button" data-preset="' + p.id + '" aria-pressed="false">' + p.label + '</button>'; });
-  $('presets').innerHTML = presetHtml;
+  function buildScen() {
+    $('roles').innerHTML = ROLES.map(function (r) { return '<button type="button" data-role="' + r.id + '" aria-pressed="false">' + r.label + '</button>'; }).join('');
+    $('sc-nov').innerHTML = NOVS.map(function (n) { return '<button type="button" data-nov="' + n.id + '" aria-pressed="false">' + n.label + '</button>'; }).join('');
+    $('sc-soft').innerHTML = SOFTS.map(function (n) { return '<button type="button" data-soft="' + n.id + '" aria-pressed="false">' + n.label + '</button>'; }).join('');
+  }
+  function buildAll() { buildGate(); buildInputs(); }
 
   /* ---------- editing ---------- */
-  var openIn = {};
   var undoSnap = null, undoTimer = null;
-  function snapshot(label) {
-    undoSnap = JSON.stringify(S);
-    $('undo-msg').textContent = '已删除「' + (label || '未命名') + '」';
+  function toast(msg, withUndo) {
+    $('undo-msg').textContent = msg;
+    $('undo-btn').hidden = !withUndo;
     $('undo').hidden = false;
     clearTimeout(undoTimer);
     undoTimer = setTimeout(function () { $('undo').hidden = true; undoSnap = null; }, 8000);
   }
-  function focusName(sel) {
-    var el = document.querySelector(sel);
-    if (el) { el.focus(); el.select(); }
+  function snapshot() { stash(); undoSnap = JSON.stringify(S); }
+  function removed(label, released) {
+    toast('已删除「' + (label || '未命名') + '」' + (released ? '，剩余项已解除锁定以保持 100%' : ''), true);
   }
+  function focusName(sel) { var el = document.querySelector(sel); if (el) { el.focus(); el.select(); } }
   function addItem(gid) {
     var gi = findG(gid); if (gi < 0) return;
-    var g = S.groups[gi], n = g.items.length;
-    if (n >= 20) return;
-    g.items.forEach(function (x) { x.w = x.w * n / (n + 1); x.r = x.w; });
-    var it = { id: nid('i'), name: '新项目', w: 100 / (n + 1), pm: 3, duo: 3 };
-    g.items.push(it);
+    var g = S.groups[gi]; if (g.items.length >= 20) return;
+    var it = { id: nid('i'), k: '', name: '新项目', w: 0, pm: null, duo: null, c: 0, on: true, lock: false };
+    addShare(g.items, it, 100);
     openIn[gid] = true;
     buildInputs(); update(); focusName('[data-name-i="' + it.id + '"]');
   }
   function delItem(iid) {
     var f = findI(iid); if (!f) return;
-    var g = S.groups[f.gi];
-    if (g.items.length < 2) return;
-    snapshot(g.items[f.ii].name);
-    g.items.splice(f.ii, 1); normalize(g.items, 100);
+    var g = S.groups[f.gi]; if (g.items.length < 2) return;
+    snapshot();
+    var nm = g.items[f.ii].name;
+    g.items.splice(f.ii, 1);
+    var rel = rebalance(g.items, 100);
+    removed(nm, rel);
     buildInputs(); update();
+  }
+  function moveItem(iid, dir) {
+    var f = findI(iid); if (!f) return;
+    var g = S.groups[f.gi], it = g.items[f.ii], ni = f.ii + dir;
+    if (ni >= 0 && ni < g.items.length) {
+      g.items[f.ii] = g.items[ni]; g.items[ni] = it;
+    } else {
+      var tg = S.groups[f.gi + dir];
+      if (!tg || g.items.length < 2 || tg.items.length >= 20) return;
+      g.items.splice(f.ii, 1);
+      var rel = rebalance(g.items, 100);
+      it.lock = false;
+      addShare(tg.items, it, 100);
+      if (dir === 1) tg.items.unshift(tg.items.pop());
+      openIn[tg.id] = true;
+      if (rel) toast('原分组剩余项已解除锁定以保持 100%', false);
+    }
+    buildInputs(); update();
+    var b = document.querySelector('[data-mv="' + iid + '"][data-dir="' + dir + '"]');
+    if (b && !b.disabled) b.focus();
   }
   function addGroup() {
     var m = S.groups.length; if (m >= 12) return;
-    S.groups.forEach(function (g) { g.w = g.w * m / (m + 1); g.r = g.w; });
-    var g = { id: nid('g'), name: '新分组', w: 100 / (m + 1), items: [{ id: nid('i'), name: '新项目', w: 100, pm: 3, duo: 3 }] };
-    S.groups.push(g);
+    var g = { id: nid('g'), k: '', name: '新分组', w: 0, lock: false, items: [{ id: nid('i'), k: '', name: '新项目', w: 100, pm: null, duo: null, c: 0, on: true, lock: false }] };
+    addShare(S.groups, g, 100); wsAdd(g.id, m);
     openIn[g.id] = true;
     buildInputs(); update(); focusName('[data-name-g="' + g.id + '"]');
   }
   function delGroup(gid) {
     var gi = findG(gid); if (gi < 0 || S.groups.length < 2) return;
-    snapshot(S.groups[gi].name);
-    S.groups.splice(gi, 1); normalize(S.groups, 100);
+    snapshot();
+    var nm = S.groups[gi].name;
+    S.groups.splice(gi, 1); wsDel(gid);
+    var rel = rebalance(S.groups, 100);
+    removed(nm, rel);
     buildInputs(); update();
+  }
+  function toggleLock(arr, idx) {
+    var x = arr[idx];
+    if (!x.lock) {
+      if (Math.abs(x.w - Math.round(x.w)) > 1e-6) setShare(arr, idx, x.w, 100);
+      x.lock = true;
+    } else x.lock = false;
+  }
+  function taskById(id) { for (var i = 0; i < S.tasks.length; i++) if (S.tasks[i].id === id) return i; return -1; }
+  function setRole(r) {
+    if (r === S.role) return;
+    stash(); S.role = r;
+    var w = S.ws[r];
+    S.groups.forEach(function (g) { g.w = w[g.id] != null ? w[g.id] : 0; g.r = g.w; });
+    rebalance(S.groups, 100);
+    update();
   }
   $('undo-btn').addEventListener('click', function () {
     if (!undoSnap) return;
     S = JSON.parse(undoSnap); undoSnap = null; $('undo').hidden = true;
-    buildInputs(); update();
+    repair(S); buildAll(); update();
   });
 
   $('dims').addEventListener('input', function (e) {
@@ -595,76 +848,181 @@ button.grow .nm { font-weight: 600; }
     } else {
       var f = findI(m[2]); if (!f) return;
       var it = S.groups[f.gi].items[f.ii];
-      if (m[1] === 'pm') it.pm = v;
-      else if (m[1] === 'duo') it.duo = v;
+      if (m[1] === 'pm') { it.pm = v; it.c = 0; }
+      else if (m[1] === 'duo') { it.duo = v; it.c = 0; }
       else setShare(S.groups[f.gi].items, f.ii, v, 100);
     }
     update();
   });
+  /* a rating slider that is still empty takes the value under the pointer on a plain click */
   $('dims').addEventListener('click', function (e) {
-    var b = e.target.closest('button'); if (!b) return;
+    var t = e.target;
+    if (t.matches && t.matches('input[type="range"][data-pend]')) {
+      var m = /^(pm|duo)-(.+)$/.exec(t.id), f = m && findI(m[2]);
+      if (f) {
+        var it = S.groups[f.gi].items[f.ii];
+        if (it[m[1]] === null) { it[m[1]] = parseFloat(t.value); it.c = 0; update(); }
+      }
+      return;
+    }
+    var b = t.closest('button'); if (!b) return;
     if (b.hasAttribute('data-toggle-g')) {
       var gid = b.getAttribute('data-toggle-g'), o = !openIn[gid];
       openIn[gid] = o;
       var sec = b.closest('.grp');
       sec.querySelector('.grp-body').hidden = !o;
-      sec.querySelector('.gtog').classList.toggle('open', o);
+      b.classList.toggle('open', o);
       b.setAttribute('aria-expanded', o ? 'true' : 'false');
-      return;
     }
-    if (b.hasAttribute('data-add-i')) addItem(b.getAttribute('data-add-i'));
+    else if (b.hasAttribute('data-add-i')) addItem(b.getAttribute('data-add-i'));
     else if (b.hasAttribute('data-del-i')) delItem(b.getAttribute('data-del-i'));
     else if (b.hasAttribute('data-del-g')) delGroup(b.getAttribute('data-del-g'));
+    else if (b.hasAttribute('data-lock-g')) { var gi = findG(b.getAttribute('data-lock-g')); if (gi >= 0) { toggleLock(S.groups, gi); update(); } }
+    else if (b.hasAttribute('data-lock-i')) { var f2_ = findI(b.getAttribute('data-lock-i')); if (f2_) { toggleLock(S.groups[f2_.gi].items, f2_.ii); update(); } }
+    else if (b.hasAttribute('data-mv')) moveItem(b.getAttribute('data-mv'), parseInt(b.getAttribute('data-dir'), 10));
+    else if (b.hasAttribute('data-confirm')) { var f3 = findI(b.getAttribute('data-confirm')); if (f3) { S.groups[f3.gi].items[f3.ii].c = 0; update(); } }
     else if (b.id === 'add-g') addGroup();
   });
-  $('presets').addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-preset]'); if (!b) return;
-    var p = PRESETS.filter(function (x) { return x.id === b.getAttribute('data-preset'); })[0];
-    var t = presetTargets(p);
-    S.groups.forEach(function (g) { if (g.k) g.w = t[g.k]; });
-    update();
+  $('dims').addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.id && /^ck-/.test(t.id)) {
+      var f = findI(t.id.slice(3)); if (f) { S.groups[f.gi].items[f.ii].on = t.checked; update(); }
+    }
   });
+
+  $('gate').addEventListener('input', function (e) {
+    var t = e.target;
+    if (t.hasAttribute('data-name-t')) { var i = taskById(t.getAttribute('data-name-t')); if (i >= 0) { S.tasks[i].name = t.value; update(); } }
+  });
+  $('gate').addEventListener('change', function (e) {
+    var t = e.target, i;
+    if (t.hasAttribute('data-ck-t')) {
+      i = taskById(t.getAttribute('data-ck-t'));
+      if (i >= 0) { S.tasks[i].on = t.checked; $('tr-' + S.tasks[i].id).classList.toggle('off', !t.checked); update(); }
+    } else if (t.hasAttribute('data-sel-t')) {
+      i = taskById(t.getAttribute('data-sel-t'));
+      if (i >= 0) { S.tasks[i][t.getAttribute('data-p')] = t.value; update(); }
+    }
+  });
+  $('gate').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.hasAttribute('data-toggle-gate')) {
+      openIn.gate = !openIn.gate;
+      b.closest('.grp').querySelector('.grp-body').hidden = !openIn.gate;
+      b.classList.toggle('open', openIn.gate);
+      b.setAttribute('aria-expanded', openIn.gate ? 'true' : 'false');
+    } else if (b.hasAttribute('data-add-t')) {
+      if (S.tasks.length >= 20) return;
+      var t = { id: nid('t'), name: '新任务', on: true, pm: '', duo: '' };
+      S.tasks.push(t); openIn.gate = true; buildGate(); update(); focusName('[data-name-t="' + t.id + '"]');
+    } else if (b.hasAttribute('data-del-t')) {
+      var i = taskById(b.getAttribute('data-del-t')); if (i < 0) return;
+      snapshot(); var nm = S.tasks[i].name; S.tasks.splice(i, 1); removed(nm, false); buildGate(); update();
+    }
+  });
+
+  $('roles').addEventListener('click', function (e) { var b = e.target.closest('button[data-role]'); if (b) setRole(b.getAttribute('data-role')); });
+  $('sc-nov').addEventListener('click', function (e) { var b = e.target.closest('button[data-nov]'); if (b) { S.nov = b.getAttribute('data-nov'); update(); } });
+  $('sc-soft').addEventListener('click', function (e) { var b = e.target.closest('button[data-soft]'); if (b) { S.soft = b.getAttribute('data-soft'); update(); } });
+  $('sx').addEventListener('input', function () { S.softX = parseFloat(this.value); update(); });
+  $('mit').addEventListener('input', function () { S.mit = parseFloat(this.value); update(); });
   $('reset').addEventListener('click', function () {
-    S = defaults();
+    S = defaults(); openIn = {}; openG = {};
     try { localStorage.removeItem(KEY); } catch (e) {}
-    buildInputs(); update();
+    buildAll(); update();
   });
 
   /* ---------- sensitivity ---------- */
-  function sensitivity(F) {
-    var adv = F.filter(function (x) { return x.duo > x.pm && x.eff > 0; });
-    var D1 = total(F, 'pm') - total(F, 'duo');
-    if (Math.abs(D1) < 0.005) return '两台目前持平。';
-    if (!adv.length) return '没有 Duo 占优的项目。';
-    var names = adv.slice(0, 4).map(function (x) { return x.s; }).join('、') + (adv.length > 4 ? '等' : '');
-    function diffAt(k) {
-      var W = 0, D = 0;
-      F.forEach(function (x) { var w = x.eff * (x.duo > x.pm ? k : 1); W += w; D += w * (x.pm - x.duo); });
-      return W > 0 ? D / W : 0;
+  function bisect(fn, lo, hi) {
+    var flo = fn(lo), mid, fm;
+    for (var k = 0; k < 50; k++) { mid = (lo + hi) / 2; fm = fn(mid); if ((fm > 0) === (flo > 0)) { lo = mid; flo = fm; } else hi = mid; }
+    return (lo + hi) / 2;
+  }
+  function lead(d) { return d > 0.005 ? 1 : (d < -0.005 ? -1 : 0); }
+  function chip(label, d) {
+    var l = lead(d);
+    return '<span class="chp ' + (l > 0 ? 'pm' : (l < 0 ? 'duo' : '')) + '"><i>' + label + '</i>' + (l > 0 ? '18PM ' + f2(d) : (l < 0 ? 'Duo ' + f2(-d) : '持平')) + '</span>';
+  }
+  function flips(ds) { return ds.some(function (d) { return lead(d) > 0; }) && ds.some(function (d) { return lead(d) < 0; }); }
+  function gwFor(gi, v) {
+    var o = {}, L = 0, Fs = 0, nf = 0;
+    S.groups.forEach(function (g, j) { if (j !== gi) { if (g.lock) L += g.w; else { Fs += g.w; nf++; } } });
+    var R = (100 - L) - v;
+    S.groups.forEach(function (g, j) {
+      if (j === gi) o[g.id] = v;
+      else if (g.lock) o[g.id] = g.w;
+      else o[g.id] = Fs > 1e-9 ? g.w * R / Fs : R / nf;
+    });
+    return o;
+  }
+  function sens(R) {
+    function sr(l, v) { return '<div class="sr"><span class="sl">' + l + '</span><div class="sv">' + v + '</div></div>'; }
+    if (!R.ok) return '<div class="sr"><span class="sl">—</span><div class="sv"></div></div>';
+    var h = '', d0 = dOf(R), i;
+
+    /* 1. software gap */
+    var dX = function (x) { return dOf(calc(scen({ x: x }))); };
+    var hasSoft = R.F.some(function (x) { return x.it.k && ITEMS[x.it.k].soft; }), q1;
+    if (!hasSoft) q1 = '<span class="chp"><i>软件项未计入</i></span>';
+    else {
+      var f0 = dX(0);
+      if (lead(f0) === 0) q1 = '<span class="chp"><i>现状</i>持平</span>';
+      else if (f0 > 0) {
+        var f1 = dX(1);
+        if (f1 > 0.005) q1 = '<span class="chp pm"><i>差距全补平后仍</i>18PM ' + f2(f1) + '</span>';
+        else { var xr = bisect(dX, 0, 1); q1 = '<span class="chp duo"><i>补上软件差距</i>' + Math.round(xr * 100) + '%</span>'; }
+      } else {
+        var fm = dX(-1);
+        if (fm < -0.005) q1 = '<span class="chp duo"><i>软件降到 1 分仍</i>Duo ' + f2(-fm) + '</span>';
+        else { var xn = bisect(dX, -1, 0); q1 = '<span class="chp pm"><i>Duo 软件项再降</i>' + Math.round(-xn * 100) + '%</span>'; }
+      }
     }
-    var lo, hi, mid, it;
-    if (D1 > 0) {
-      if (diffAt(200) > 0) return 'Duo 占优项权重放大到 200 倍，18 Pro Max 仍然领先。';
-      lo = 1; hi = 200;
-      for (it = 0; it < 50; it++) { mid = (lo + hi) / 2; if (diffAt(mid) > 0) lo = mid; else hi = mid; }
-      return 'Duo 占优项（' + names + '）权重放大到 ' + hi.toFixed(1) + ' 倍，Duo 才会反超。';
+    h += sr('Duo 软件追平', q1);
+
+    /* 2. category weight that flips the ranking */
+    var chips = [];
+    if (lead(d0) !== 0) {
+      S.groups.forEach(function (g, gi) {
+        var G = R.gs.filter(function (x) { return x.g === g; })[0];
+        if (!G || !canAdjust(S.groups, gi)) return;
+        var cap = 100 - lockedSum(S.groups, gi);
+        var fn = function (v) { return dOf(calc(scen(), gwFor(gi, v))); };
+        var ends = [0, cap], k, root = null;
+        for (k = 0; k < 2; k++) {
+          var fe = fn(ends[k]);
+          if (lead(fe) !== lead(d0)) { root = bisect(fn, Math.min(g.w, ends[k]), Math.max(g.w, ends[k])); break; }
+        }
+        if (root !== null && Math.abs(root - g.w) > 0.05) chips.push({ n: g.name || '未命名', from: g.w, to: root });
+      });
+      chips.sort(function (a, b) { return Math.abs(a.to - a.from) - Math.abs(b.to - b.from); });
     }
-    if (diffAt(0) < 0) return '即使忽略 Duo 占优项，Duo 仍然领先。';
-    lo = 0; hi = 1;
-    for (it = 0; it < 50; it++) { mid = (lo + hi) / 2; if (diffAt(mid) > 0) lo = mid; else hi = mid; }
-    return 'Duo 占优项（' + names + '）权重缩小到 ' + lo.toFixed(1) + ' 倍，两台持平。';
+    var q2;
+    if (lead(d0) === 0) q2 = '<span class="chp"><i>当前</i>持平</span>';
+    else if (!chips.length) q2 = '<span class="chp"><i>任一大类权重单独变动都不会翻转</i></span>';
+    else q2 = chips.slice(0, 3).map(function (c) {
+      return '<span class="chp"><i>' + esc(c.n) + '</i>' + Math.round(c.from) + '%→' + Math.round(c.to) + '%</span>';
+    }).join('');
+    h += sr('翻转排序的权重', q2);
+
+    /* 3. novelty */
+    var nd = NOVS.map(function (n) { return dOf(calc(scen({ f: n.f }))); });
+    h += sr('新鲜感', NOVS.map(function (n, k) { return chip(n.label, nd[k]); }).join('') + (flips(nd) ? '<span class="flip">排序改变</span>' : ''));
+
+    /* 4. backup phone */
+    var bd = [dOf(calc(scen({ backup: false }))), dOf(calc(scen({ backup: true })))];
+    h += sr('备用机', chip('无', bd[0]) + chip('有', bd[1]) + (flips(bd) ? '<span class="flip">排序改变</span>' : ''));
+    return h;
   }
 
   /* ---------- radar ---------- */
   function radar(F) {
     var n = F.length, cx = 220, cy = 198, R = 128, g = '', i, r;
+    if (n < 3) { $('radar').innerHTML = '<text class="tick" x="220" y="200" text-anchor="middle" font-size="12">评分满 3 项后显示</text>'; return; }
     function pt(idx, v) {
       var a = -Math.PI / 2 + idx * 2 * Math.PI / n, rr = R * v / 5;
       return [cx + rr * Math.cos(a), cy + rr * Math.sin(a)];
     }
-    function poly(vals) {
-      return vals.map(function (v, idx) { var q = pt(idx, v); return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ');
-    }
+    function poly(vals) { return vals.map(function (v, idx) { var q = pt(idx, v); return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' '); }
     for (r = 1; r <= 5; r++) {
       var ring = []; for (i = 0; i < n; i++) ring.push(r);
       g += '<polygon class="ring' + (r === 5 ? ' outer' : '') + '" points="' + poly(ring) + '"/>';
@@ -673,12 +1031,9 @@ button.grow .nm { font-weight: 600; }
       var e = pt(i, 5);
       g += '<line class="axis" x1="' + cx + '" y1="' + cy + '" x2="' + e[0].toFixed(1) + '" y2="' + e[1].toFixed(1) + '"/>';
     }
-    [1, 3, 5].forEach(function (v) {
-      g += '<text class="tick" x="' + (cx + 4) + '" y="' + (cy - R * v / 5 - 2).toFixed(1) + '">' + v + '</text>';
-    });
+    [1, 3, 5].forEach(function (v) { g += '<text class="tick" x="' + (cx + 4) + '" y="' + (cy - R * v / 5 - 2).toFixed(1) + '">' + v + '</text>'; });
     var pmv = F.map(function (x) { return x.pm; }), duov = F.map(function (x) { return x.duo; });
-    g += '<polygon class="ser-pm" points="' + poly(pmv) + '"/>';
-    g += '<polygon class="ser-duo" points="' + poly(duov) + '"/>';
+    g += '<polygon class="ser-pm" points="' + poly(pmv) + '"/><polygon class="ser-duo" points="' + poly(duov) + '"/>';
     for (i = 0; i < n; i++) {
       var a1 = pt(i, pmv[i]), a2 = pt(i, duov[i]);
       g += '<circle class="dot-pm" cx="' + a1[0].toFixed(1) + '" cy="' + a1[1].toFixed(1) + '" r="3"/>';
@@ -695,7 +1050,7 @@ button.grow .nm { font-weight: 600; }
     $('radar').innerHTML = g;
   }
 
-  /* ---------- bars: groups first, items on demand ---------- */
+  /* ---------- bars: categories first, items on demand ---------- */
   var openG = {};
   function barHtml(c, maxAbs) {
     var w = (Math.abs(c) / maxAbs * 50).toFixed(1);
@@ -704,21 +1059,20 @@ button.grow .nm { font-weight: 600; }
     return '';
   }
   function cls(c) { return c > 0.0049 ? 'pm' : (c < -0.0049 ? 'duo' : ''); }
-  function bars(F) {
-    var cs = contribs(F), rows = [], maxAbs = 0.1;
-    S.groups.forEach(function (g) {
-      var items = [], gc = 0;
-      F.forEach(function (x, i) { if (x.g === g) { items.push({ s: x.s, c: cs[i] }); gc += cs[i]; maxAbs = Math.max(maxAbs, Math.abs(cs[i])); } });
+  function bars(R) {
+    var rows = [], maxAbs = 0.1;
+    R.gs.forEach(function (G) {
+      var items = G.its.map(function (x) { maxAbs = Math.max(maxAbs, Math.abs(x.c)); return { s: x.s, c: x.c }; });
       items.sort(function (a, b) { return b.c - a.c; });
-      maxAbs = Math.max(maxAbs, Math.abs(gc));
-      rows.push({ g: g, c: gc, items: items });
+      maxAbs = Math.max(maxAbs, Math.abs(G.c));
+      rows.push({ g: G.g, c: G.c, items: items });
     });
     rows.sort(function (a, b) { return b.c - a.c; });
     var h = '';
     rows.forEach(function (r) {
       var open = !!openG[r.g.id];
       h += '<button type="button" class="brow grow' + (open ? ' open' : '') + '" data-toggle="' + r.g.id + '" aria-expanded="' + open + '">' +
-        '<span class="nm"><i class="chev"></i>' + esc(nameOf(r.g)) + '</span><div class="track">' + barHtml(r.c, maxAbs) + '</div><span class="bv ' + cls(r.c) + '">' + sgn(r.c) + '</span></button>';
+        '<span class="nm"><i class="chev"></i>' + esc(r.g.name || '未命名') + '</span><div class="track">' + barHtml(r.c, maxAbs) + '</div><span class="bv ' + cls(r.c) + '">' + sgn(r.c) + '</span></button>';
       if (open) r.items.forEach(function (it) {
         h += '<div class="brow sub"><span class="nm">' + esc(it.s) + '</span><div class="track">' + barHtml(it.c, maxAbs) + '</div><span class="bv ' + cls(it.c) + '">' + sgn(it.c) + '</span></div>';
       });
@@ -728,45 +1082,50 @@ button.grow .nm { font-weight: 600; }
   $('bars').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-toggle]'); if (!b) return;
     var id = b.getAttribute('data-toggle'); openG[id] = !openG[id];
-    bars(flat());
+    bars(calc(scen()));
   });
 
   /* ---------- export ---------- */
-  var CP = { bg: '#FFFFFF', fg: '#141A23', mu: '#566172', ln: '#D3D9E1', tr: '#E6EAF0', pm: '#2563C9', duo: '#D9660B',
+  var CP = { bg: '#FFFFFF', fg: '#141A23', mu: '#566172', ln: '#D3D9E1', tr: '#E6EAF0', pm: '#2563C9', duo: '#D9660B', wn: '#B42318',
              pmf: 'rgba(37,99,201,0.18)', duof: 'rgba(217,102,11,0.18)' };
   var FB = "'IBM Plex Sans','PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif";
   var FN = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
 
-  function presetTargets(p) {
-    var built = S.groups.filter(function (g) { return g.k; });
-    var R = 100 - sum(S.groups.filter(function (g) { return !g.k; }).map(function (g) { return g.w; }));
-    var P = sum(built.map(function (g) { return p.w[g.k]; })), t = {};
-    built.forEach(function (g) { t[g.k] = P > 0 ? p.w[g.k] / P * R : R / built.length; });
+  function scenTags() {
+    var t = [];
+    if (S.nov !== 'keep') t.push('新鲜感' + NOVS.filter(function (n) { return n.id === S.nov; })[0].label);
+    if (S.soft === 'part') t.push('软件部分改善');
+    else if (S.soft === 'custom') t.push('软件改善 ' + S.softX + '%');
+    if (S.role === 'backup') t.push('备用机缓解 ' + S.mit + '%');
     return t;
   }
-  function presetLabel() {
-    var m = null;
-    if (S.groups.some(function (g) { return g.k; })) PRESETS.forEach(function (p) {
-      var t = presetTargets(p);
-      if (S.groups.every(function (g) { return !g.k || Math.abs(g.w - t[g.k]) < 0.5; })) m = p;
-    });
-    return m ? m.label : '自定义权重';
+  function verdictText(d) {
+    if (Math.abs(d) < 0.1) return '两台几乎持平，差 ' + f2(Math.abs(d)) + ' 分';
+    return (d > 0 ? '18 Pro Max' : 'Duo') + ' 领先 ' + f2(Math.abs(d)) + ' 分';
   }
-  function groups(F) {
-    var cs = contribs(F), rows = F.map(function (x, i) { return { s: x.s, c: cs[i] }; });
+  function verdictFull(R) {
+    var d = dOf(R), t = verdictText(d), G = gateInfo(), l = lead(d);
+    if (S.role === 'solo' && l !== 0 && G[l > 0 ? 'pm' : 'duo'].bad.length) t += '，但未满足唯一主力机要求';
+    return t;
+  }
+  function gateLines() {
+    if (S.role !== 'solo') return [];
+    var G = gateInfo(), out = [];
+    if (G.pm.bad.length) out.push('18 Pro Max 未满足唯一主力机要求：' + G.pm.bad.join('、'));
+    if (G.duo.bad.length) out.push('Duo 未满足唯一主力机要求：' + G.duo.bad.join('、'));
+    return out;
+  }
+  function lists(F) {
+    var rows = F.map(function (x) { return { s: x.s, c: x.c }; });
     return {
       pm: rows.filter(function (r) { return r.c > 0.0049; }).sort(function (a, b) { return b.c - a.c; }).map(function (r) { return r.s; }),
       duo: rows.filter(function (r) { return r.c < -0.0049; }).sort(function (a, b) { return a.c - b.c; }).map(function (r) { return r.s; })
     };
   }
-  function verdictText(F) {
-    var d = total(F, 'pm') - total(F, 'duo');
-    if (Math.abs(d) < 0.1) return '两台几乎持平，差 ' + f2(Math.abs(d)) + ' 分';
-    return (d > 0 ? '18 Pro Max' : 'Duo') + ' 领先 ' + f2(Math.abs(d)) + ' 分';
-  }
   function exportText() {
-    var F = flat(), g = groups(F);
-    var L = ['18 Pro Max ' + f2(total(F, 'pm')) + ' : Duo ' + f2(total(F, 'duo')), verdictText(F) + '（' + presetLabel() + '）'];
+    var R = calc(scen()), g = lists(R.F), tg = scenTags();
+    var L = ['18 Pro Max ' + f2(R.pm) + ' : Duo ' + f2(R.duo), verdictFull(R) + '（' + roleLabel() + (tg.length ? '；' + tg.join('、') : '') + '）'];
+    gateLines().forEach(function (x) { L.push(x); });
     if (g.pm.length) L.push('18 Pro Max 占优：' + g.pm.join('、'));
     if (g.duo.length) L.push('Duo 占优：' + g.duo.join('、'));
     return L.join('\n');
@@ -787,7 +1146,7 @@ button.grow .nm { font-weight: 600; }
     return y;
   }
   function drawCard(cv, H) {
-    var sc = 2, ctx = cv.getContext('2d'), i, F = flat(), N = F.length;
+    var sc = 2, ctx = cv.getContext('2d'), i, R = calc(scen()), F = R.F, N = F.length;
     cv.width = 900 * sc; cv.height = H * sc; ctx.scale(sc, sc);
     ctx.fillStyle = CP.bg; ctx.fillRect(0, 0, 900, H);
     ctx.textBaseline = 'alphabetic';
@@ -795,9 +1154,9 @@ button.grow .nm { font-weight: 600; }
     ctx.textAlign = 'left'; ctx.fillStyle = CP.fg; ctx.font = '600 28px ' + FB;
     ctx.fillText('18 Pro Max vs Duo', 48, 76);
     ctx.textAlign = 'right'; ctx.fillStyle = CP.mu; ctx.font = '400 20px ' + FB;
-    ctx.fillText(presetLabel(), 852, 76);
+    ctx.fillText(roleLabel(), 852, 76);
 
-    var tp = total(F, 'pm'), td = total(F, 'duo'), d = tp - td;
+    var tp = R.pm, td = R.duo, d = tp - td;
     [{ x: 48, name: '18 Pro Max', v: tp, c: CP.pm, lead: d > 0.005 }, { x: 462, name: 'Duo', v: td, c: CP.duo, lead: d < -0.005 }].forEach(function (b) {
       rr(ctx, b.x, 108, 390, 132, 8);
       ctx.lineWidth = b.lead ? 3 : 1; ctx.strokeStyle = b.lead ? b.c : CP.ln; ctx.stroke();
@@ -809,35 +1168,42 @@ button.grow .nm { font-weight: 600; }
       ctx.fillStyle = b.c; rr(ctx, b.x + 20, 218, Math.max(8, 350 * b.v / 5), 8, 4); ctx.fill();
     });
 
+    var y = 292;
     ctx.textAlign = 'center'; ctx.font = '600 26px ' + FB;
     ctx.fillStyle = Math.abs(d) < 0.1 ? CP.fg : (d > 0 ? CP.pm : CP.duo);
-    ctx.fillText(verdictText(F), 450, 292);
+    y = wrap(ctx, verdictFull(R), 450, y, 800, 34);
+    ctx.font = '400 20px ' + FB; ctx.fillStyle = CP.wn;
+    gateLines().forEach(function (ln) { y = wrap(ctx, ln, 450, y + 6, 800, 28); });
+    var tg = scenTags();
+    if (tg.length) { ctx.fillStyle = CP.mu; y = wrap(ctx, tg.join(' · '), 450, y + 6, 800, 28); }
 
-    var cx = 450, cy = 560, R = 170, r;
-    function pt(idx, v) { var a = -Math.PI / 2 + idx * 2 * Math.PI / N, q = R * v / 5; return [cx + q * Math.cos(a), cy + q * Math.sin(a)]; }
-    function path(vals) { ctx.beginPath(); vals.forEach(function (v, k) { var q = pt(k, v); if (k) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.closePath(); }
-    for (r = 1; r <= 5; r++) {
-      var ring = []; for (i = 0; i < N; i++) ring.push(r);
-      path(ring); ctx.lineWidth = 1; ctx.strokeStyle = r === 5 ? '#8B95A5' : CP.ln; ctx.stroke();
-    }
-    for (i = 0; i < N; i++) { var e = pt(i, 5); ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(e[0], e[1]); ctx.strokeStyle = CP.ln; ctx.lineWidth = 1; ctx.stroke(); }
-    [[F.map(function (x) { return x.pm; }), CP.pm, CP.pmf], [F.map(function (x) { return x.duo; }), CP.duo, CP.duof]].forEach(function (a) {
-      path(a[0]); ctx.fillStyle = a[2]; ctx.fill(); ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.strokeStyle = a[1]; ctx.stroke();
-      a[0].forEach(function (v, k) { var q = pt(k, v); ctx.beginPath(); ctx.arc(q[0], q[1], 4, 0, Math.PI * 2); ctx.fillStyle = a[1]; ctx.fill(); });
-    });
-    ctx.font = '400 20px ' + FB; ctx.fillStyle = CP.fg;
-    for (i = 0; i < N; i++) {
-      var ang = -Math.PI / 2 + i * 2 * Math.PI / N, c = Math.cos(ang), s2 = Math.sin(ang);
-      ctx.textAlign = c > 0.3 ? 'left' : (c < -0.3 ? 'right' : 'center');
-      ctx.fillText(F[i].s, cx + (R + 20) * c, cy + (R + 20) * s2 + (s2 > 0.5 ? 16 : (s2 < -0.5 ? -4 : 7)));
+    var cx = 450, R0 = 170, cy = y + 250, r;
+    if (N >= 3) {
+      var pt = function (idx, v) { var a = -Math.PI / 2 + idx * 2 * Math.PI / N, q = R0 * v / 5; return [cx + q * Math.cos(a), cy + q * Math.sin(a)]; };
+      var path = function (vals) { ctx.beginPath(); vals.forEach(function (v, k) { var q = pt(k, v); if (k) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.closePath(); };
+      for (r = 1; r <= 5; r++) {
+        var ring = []; for (i = 0; i < N; i++) ring.push(r);
+        path(ring); ctx.lineWidth = 1; ctx.strokeStyle = r === 5 ? '#8B95A5' : CP.ln; ctx.stroke();
+      }
+      for (i = 0; i < N; i++) { var e = pt(i, 5); ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(e[0], e[1]); ctx.strokeStyle = CP.ln; ctx.lineWidth = 1; ctx.stroke(); }
+      [[F.map(function (x) { return x.pm; }), CP.pm, CP.pmf], [F.map(function (x) { return x.duo; }), CP.duo, CP.duof]].forEach(function (a) {
+        path(a[0]); ctx.fillStyle = a[2]; ctx.fill(); ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.strokeStyle = a[1]; ctx.stroke();
+        a[0].forEach(function (v, k) { var q = pt(k, v); ctx.beginPath(); ctx.arc(q[0], q[1], 4, 0, Math.PI * 2); ctx.fillStyle = a[1]; ctx.fill(); });
+      });
+      ctx.font = '400 20px ' + FB; ctx.fillStyle = CP.fg;
+      for (i = 0; i < N; i++) {
+        var ang = -Math.PI / 2 + i * 2 * Math.PI / N, c = Math.cos(ang), s2 = Math.sin(ang);
+        ctx.textAlign = c > 0.3 ? 'left' : (c < -0.3 ? 'right' : 'center');
+        ctx.fillText(F[i].s, cx + (R0 + 20) * c, cy + (R0 + 20) * s2 + (s2 > 0.5 ? 16 : (s2 < -0.5 ? -4 : 7)));
+      }
     }
 
-    var y = 828;
+    y = cy + 268;
     ctx.font = '400 20px ' + FB; ctx.textAlign = 'left';
     ctx.fillStyle = CP.pm; ctx.fillRect(306, y - 14, 14, 14); ctx.fillStyle = CP.mu; ctx.fillText('18 Pro Max', 326, y);
     ctx.fillStyle = CP.duo; ctx.fillRect(500, y - 14, 14, 14); ctx.fillStyle = CP.mu; ctx.fillText('Duo', 520, y);
     y += 56;
-    var g = groups(F);
+    var g = lists(F);
     [['18 Pro Max 占优', g.pm, CP.pm], ['Duo 占优', g.duo, CP.duo]].forEach(function (blk) {
       if (!blk[1].length) return;
       ctx.textAlign = 'left'; ctx.font = '600 20px ' + FB; ctx.fillStyle = blk[2]; ctx.fillText(blk[0], 48, y);
@@ -851,7 +1217,7 @@ button.grow .nm { font-weight: 600; }
   function msg(t) { $('msg').textContent = t || ''; }
   function openExport() {
     function go() {
-      var t = document.createElement('canvas'), endY = drawCard(t, 1700);
+      var t = document.createElement('canvas'), endY = drawCard(t, 2400);
       var cv = document.createElement('canvas'); drawCard(cv, Math.ceil(endY) + 20);
       cardCv = cv;
       var url = cv.toDataURL('image/png');
@@ -879,48 +1245,96 @@ button.grow .nm { font-weight: 600; }
 
   /* ---------- update ---------- */
   function update() {
-    var F = flat();
-    var gws = lrm(S.groups.map(function (g) { return g.w; }), 100);
+    var sc = scen(), R = calc(sc), F = R.F, effById = {};
+    F.forEach(function (x) { effById[x.it.id] = x.eff; });
+
+    var gws = lrm(S.groups.map(function (g) { return g.w; }), 100), nPend = 0, nConf = 0;
     S.groups.forEach(function (g, gi) {
       var gs = $('gw-' + g.id);
-      gs.value = gws[gi]; gs.disabled = S.groups.length === 1;
+      gs.max = Math.floor(capOf(S.groups, gi, 100) + 1e-9);
+      gs.value = gws[gi]; gs.disabled = !canAdjust(S.groups, gi);
       $('ogw-' + g.id).textContent = gws[gi] + '%';
+      var lb = document.querySelector('[data-lock-g="' + g.id + '"]');
+      lb.setAttribute('aria-pressed', g.lock ? 'true' : 'false');
+      lb.title = g.lock ? '解除锁定' : '锁定权重';
+      var gp = g.items.filter(pending).length;
+      $('gc-' + g.id).textContent = g.items.length + ' 项' + (gp ? ' · 待评分 ' + gp : '');
       var iws = lrm(g.items.map(function (x) { return x.w; }), 100);
       g.items.forEach(function (it, ii) {
-        $('pm-' + it.id).value = it.pm; $('duo-' + it.id).value = it.duo;
-        $('o-pm-' + it.id).textContent = it.pm.toFixed(1);
-        $('o-duo-' + it.id).textContent = it.duo.toFixed(1);
+        var d = $('d-' + it.id);
+        d.classList.toggle('off', it.on === false);
+        $('ck-' + it.id).checked = it.on !== false;
+        ['pm', 'duo'].forEach(function (p) {
+          var inp = $(p + '-' + it.id), nul = it[p] === null;
+          inp.value = nul ? 3 : it[p];
+          $('o-' + p + '-' + it.id).textContent = nul ? '—' : it[p].toFixed(1);
+          (p === 'pm' ? $('lp-' + it.id) : $('ld-' + it.id)).classList.toggle('pend', nul);
+        });
         var iw = $('iw-' + it.id);
-        iw.value = iws[ii]; iw.disabled = g.items.length === 1;
+        iw.max = Math.floor(capOf(g.items, ii, 100) + 1e-9);
+        iw.value = iws[ii]; iw.disabled = !canAdjust(g.items, ii);
         $('o-iw-' + it.id).textContent = iws[ii] + '%';
-        $('share-' + it.id).textContent = '总 ' + Math.round(g.w * it.w / 100) + '%';
+        var ilb = document.querySelector('[data-lock-i="' + it.id + '"]');
+        ilb.setAttribute('aria-pressed', it.lock ? 'true' : 'false');
+        ilb.title = it.lock ? '解除锁定' : '锁定权重';
+        var pd = pending(it), cf = it.on !== false && !!it.c;
+        $('bp-' + it.id).textContent = pd ? '待评分' : '';
+        $('bc-' + it.id).hidden = !cf;
+        $('share-' + it.id).textContent = effById[it.id] != null ? '总 ' + Math.round(effById[it.id] * 100) + '%' : '';
+        if (pd) nPend++;
+        if (cf) nConf++;
       });
     });
+    $('pend').textContent = (nPend ? '待评分 ' + nPend : '') + (nPend && nConf ? ' · ' : '') + (nConf ? '待确认 ' + nConf : '');
 
-    var matched = presetLabel();
-    PRESETS.forEach(function (p) {
-      document.querySelector('button[data-preset="' + p.id + '"]').setAttribute('aria-pressed', p.label === matched ? 'true' : 'false');
-    });
+    /* scenario controls */
+    Array.prototype.forEach.call($('roles').children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-role') === S.role ? 'true' : 'false'); });
+    Array.prototype.forEach.call($('sc-nov').children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-nov') === S.nov ? 'true' : 'false'); });
+    Array.prototype.forEach.call($('sc-soft').children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-soft') === S.soft ? 'true' : 'false'); });
+    $('sx-wrap').hidden = S.soft !== 'custom';
+    $('sx').value = S.softX; $('sx-o').textContent = S.softX + '%';
+    $('mit-wrap').hidden = S.role !== 'backup';
+    $('mit').value = S.mit; $('mit-o').textContent = S.mit + '%';
 
-    var tp = total(F, 'pm'), td = total(F, 'duo'), d = tp - td;
-    $('tn-pm').innerHTML = f2(tp) + '<small>/5</small>';
-    $('tn-duo').innerHTML = f2(td) + '<small>/5</small>';
-    $('m-pm').style.width = (tp / 5 * 100).toFixed(1) + '%';
-    $('m-duo').style.width = (td / 5 * 100).toFixed(1) + '%';
+    /* gate */
+    var G = gateInfo(), gsum = $('gsum');
+    if (gsum) {
+      var gtxt = '';
+      if (G.n && S.role !== 'second') {
+        ['pm', 'duo'].forEach(function (p) {
+          var nm = p === 'pm' ? '18PM' : 'Duo', q = G[p];
+          gtxt += '<span class="' + (q.bad.length ? 'bad' : p) + '">' + nm + ' ' + (q.bad.length ? q.bad.length + ' 项未达标' : (q.pend ? '待标记' : '全部达标')) + '</span>';
+        });
+      }
+      gsum.innerHTML = gtxt;
+    }
+
+    /* totals */
+    var d = dOf(R);
+    $('tn-pm').innerHTML = f2(R.pm) + '<small>/5</small>';
+    $('tn-duo').innerHTML = f2(R.duo) + '<small>/5</small>';
+    $('m-pm').style.width = (R.pm / 5 * 100).toFixed(1) + '%';
+    $('m-duo').style.width = (R.duo / 5 * 100).toFixed(1) + '%';
     $('tot-pm').className = 'tot pm' + (d > 0.005 ? ' lead' : '');
     $('tot-duo').className = 'tot duo' + (d < -0.005 ? ' lead' : '');
+    $('gt-pm').innerHTML = gateHtml({ n: G.n, bad: G.pm.bad, pend: G.pm.pend });
+    $('gt-duo').innerHTML = gateHtml({ n: G.n, bad: G.duo.bad, pend: G.duo.pend });
     $('chips').innerHTML =
-      '<span class="chip pm"><i></i>18 Pro Max <b>' + f2(tp) + '</b></span>' +
-      '<span class="chip duo"><i></i>Duo <b>' + f2(td) + '</b></span>';
+      '<span class="chip pm"><i></i>18 Pro Max <b>' + f2(R.pm) + '</b></span>' +
+      '<span class="chip duo"><i></i>Duo <b>' + f2(R.duo) + '</b></span>';
 
-    var vt = verdictText(F);
-    $('verdict').innerHTML = Math.abs(d) < 0.1 ? vt + '。' : '<b>' + vt.replace(' 领先', '</b> 领先') + '。';
+    var vt = R.ok ? verdictFull(R) : '至少给一项评分后显示结果';
+    var base = R.ok ? vt.split('，但')[0] : vt;
+    var rest = vt.slice(base.length);
+    $('verdict').innerHTML = (R.ok && Math.abs(d) >= 0.1 ? '<b>' + esc(base).replace(' 领先', '</b> 领先') : esc(base)) + esc(rest) + (R.ok ? '。' : '');
+    $('tags').textContent = scenTags().join(' · ');
     $('btotal').textContent = sgn(d);
-    $('sens').textContent = sensitivity(F);
-    radar(F); bars(F); save();
+    $('sens').innerHTML = sens(R);
+    radar(F); bars(R); save();
   }
 
-  buildInputs();
+  buildScen();
+  buildAll();
   update();
 })();
 </script>

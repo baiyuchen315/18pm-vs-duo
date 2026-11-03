@@ -261,6 +261,34 @@ button.grow .nm { font-weight: 600; }
   .brow.sub { grid-template-columns: calc(7em - 14px) minmax(0, 1fr) 3.4em; }
   .sr { grid-template-columns: minmax(0, 1fr); }
 }
+
+.sx span { font-size: 12.5px; color: var(--muted); }
+.sx.pmx input { accent-color: var(--pm); }
+.sx.dux input { accent-color: var(--duo); }
+#sc-reset { padding: 4px 10px; font-size: 12.5px; color: var(--muted); }
+.rng { margin-top: 6px; font: 12.5px var(--font-num); color: var(--muted); }
+.rng:empty { display: none; }
+.gnote { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+.gnote.bad { color: var(--warn); }
+.gnote:empty { display: none; }
+body.sec .res-radar { display: none; }
+.mrow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: center; padding: 5px 0; font-size: 13px; }
+.mrow.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.mrow .ml { color: var(--fg); }
+input.num { width: 100%; font: 500 13px var(--font-num); color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; min-width: 0; }
+input.num.pm { border-color: var(--pm); }
+input.num.duo { border-color: var(--duo); }
+.mnet { font: 500 13px var(--font-num); }
+.mnet.pm { color: var(--pm-text); }
+.mnet.duo { color: var(--duo-text); }
+.mcap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 8px; font-size: 12px; margin-bottom: 2px; }
+.mcap.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.mcap .pm { color: var(--pm-text); }
+.mcap .duo { color: var(--duo-text); }
+.msel { display: flex; align-items: center; gap: 8px; padding: 8px 0 2px; font-size: 13px; border-top: 1px solid var(--line); margin-top: 6px; }
+.msel select { width: auto; }
+.sg { padding: 2px 8px; font-size: 12px; color: var(--muted); }
+.chip small { font-size: 11px; color: var(--muted); margin-left: 2px; }
 </style>
 </head>
 <body>
@@ -281,12 +309,13 @@ button.grow .nm { font-weight: 600; }
       <button type="button" id="export">导出结果</button>
       <button type="button" id="reset">恢复初始</button>
     </div>
-    <div class="scen">
-      <div class="sgrp"><span class="k">新鲜感</span><div class="seg" id="sc-nov" role="group" aria-label="新鲜感情景"></div></div>
-      <div class="sgrp"><span class="k">软件</span><div class="seg" id="sc-soft" role="group" aria-label="软件情景"></div>
+    <div class="scen" id="scen">
+      <div class="sgrp" id="nov-wrap"><span class="k">新鲜感保留</span>
+        <label class="sx pmx"><span>18PM</span><input type="range" id="nv-pm" min="0" max="100" step="5" aria-label="18 Pro Max 新鲜感保留"><output id="nv-pm-o"></output></label>
+        <label class="sx dux"><span>Duo</span><input type="range" id="nv-duo" min="0" max="100" step="5" aria-label="Duo 新鲜感保留"><output id="nv-duo-o"></output></label></div>
+      <div class="sgrp" id="soft-wrap"><span class="k">软件</span><div class="seg" id="sc-soft" role="group" aria-label="软件情景"></div>
         <label class="sx" id="sx-wrap" hidden><input type="range" id="sx" min="0" max="100" step="5" aria-label="Duo 软件改善幅度"><output id="sx-o"></output></label></div>
-      <div class="sgrp" id="mit-wrap" hidden><span class="k">备用机缓解</span>
-        <label class="sx"><input type="range" id="mit" min="0" max="100" step="5" aria-label="备用机缓解幅度"><output id="mit-o"></output></label></div>
+      <button type="button" id="sc-reset" hidden>恢复现状</button>
     </div>
 
     <div class="cols">
@@ -297,31 +326,35 @@ button.grow .nm { font-weight: 600; }
         <details class="note">
           <summary>模型说明</summary>
           <ul>
-            <li>实际权重 = 大类权重 × 类内权重；待评分或未计入的项目不参与，所在大类内其余项目按比例重算。</li>
+            <li>实际权重 = 大类权重 × 类内权重。待评分项目保留预定权重，不转给其他项目；只有取消“计入”的项目才被排除，其余按比例重算。</li>
+            <li>评分未完成时，总分只是暂算：按已评分项目的权重比例计算，并给出未评项目在 1–5 分范围内形成的区间。全部评完才是最终结果。</li>
             <li>调整一项时，其余未锁定项按原有比例分摊；锁定项保持不变，可调上限 = 100% − 其他锁定项之和。</li>
-            <li>三种设备角色各自保存大类权重，两台手机的评分不随角色改变。</li>
-            <li>必要任务是独立门槛，不参与加权；唯一主力机角色下，任一必要任务未达标即标注未满足。</li>
-            <li>备用机只缓解标有“故障恢复”“停机后果”的两项：得分向 5 分靠近所设比例，不改变 App 适配、Bug 或硬件可靠性。</li>
-            <li>新鲜感情景只缩放该项两机之间的差距：保持 100%、减半 50%、明显消退 20%，不影响审美与材质。</li>
+            <li>硬件可靠性只评故障发生的可能性（你的主观判断）；故障恢复便利只评恢复所需的时间、操作与服务负担；停机承受能力是个人门槛，不是手机得分。备用机只缓解停机约束，不改变任何评分。</li>
+            <li>必要任务与停机承受是独立门槛，不参与加权；唯一主力机角色下未达标会直接标注。</li>
+            <li>金额明细：保留某台 = 换出另一台所得（退款与出售/折抵取较高者，不叠加）+ 期末残值 − 额外费用 − 另购设备。只有各方案都不会改变的历史支出才排除。未填写的金额按 0 计并提示。“支出值得度”是单独的主观评分，只在那里计一次。</li>
+            <li>新鲜感按设备分别设置保留程度：有效分 = 1 + (评分 − 1) × 保留比例，1 分表示无额外愉悦；一台的变化不会改变另一台，也不影响审美与材质。</li>
             <li>软件情景只缩小 Duo 在“任务可用性”“交互省心”上与 18 Pro Max 的差距；改善幅度由你设定，不代表一定会发生。</li>
-            <li>敏感性分析一次只变一个量：软件差距、某个大类权重（其余未锁定大类按比例变化）、新鲜感、备用机。</li>
-            <li>评分 1–5；成本类 5 表示负担小。价格与残值请自行判断后评分，已付出的钱不计入。</li>
+            <li>第二台体验设备比较“A 仅现有主力机”与“B 主力机 + Duo”，只评价 Duo 带来的增量收益与额外负担；主力机已提供的通信、支付等价值不重复计入。使用占比用来折算实际用得上的部分。</li>
+            <li>敏感性分析一次只变一个量，其余未锁定大类按比例变化；评分未完成时标注为暂算。</li>
+            <li>评分 1–5（第二台增量为 0–5，0 表示没有增量或负担）。</li>
           </ul>
         </details>
       </section>
 
       <section class="results" aria-label="评分结果">
         <div class="res">
-          <h2>总分（满分 5）</h2>
+          <h2 id="h-tot">总分（满分 5）</h2>
           <div class="totals">
-            <div class="tot pm" id="tot-pm"><div class="tl">18 Pro Max</div><div class="tn" id="tn-pm">0.00</div><div class="meter"><i id="m-pm"></i></div><div id="gt-pm"></div></div>
-            <div class="tot duo" id="tot-duo"><div class="tl">Duo</div><div class="tn" id="tn-duo">0.00</div><div class="meter"><i id="m-duo"></i></div><div id="gt-duo"></div></div>
+            <div class="tot pm" id="tot-pm"><div class="tl" id="tl-pm">18 Pro Max</div><div class="tn" id="tn-pm">0.00</div><div class="meter"><i id="m-pm"></i></div><div class="rng" id="rg-pm"></div><div id="gt-pm"></div></div>
+            <div class="tot duo" id="tot-duo"><div class="tl" id="tl-duo">Duo</div><div class="tn" id="tn-duo">0.00</div><div class="meter"><i id="m-duo"></i></div><div class="rng" id="rg-duo"></div><div id="gt-duo"></div></div>
           </div>
           <p class="verdict" id="verdict"></p>
+          <p class="gnote" id="gnote"></p>
+          <p class="gnote" id="money"></p>
           <p class="tags" id="tags"></p>
         </div>
 
-        <div class="res">
+        <div class="res res-radar">
           <h2>各项得分</h2>
           <div class="radar-wrap"><svg class="radar" id="radar" viewBox="0 0 440 400" role="img" aria-label="两台手机各项得分的雷达图"></svg></div>
           <div class="legend"><span class="pm"><i></i>18 Pro Max</span><span class="duo"><i></i>Duo</span></div>
@@ -329,9 +362,9 @@ button.grow .nm { font-weight: 600; }
 
         <div class="res">
           <h2>分差从哪里来</h2>
-          <div class="axis-cap" aria-hidden="true"><div></div><div><span class="l">← Duo 多得</span><span class="r">18 Pro Max 多得 →</span></div><div></div></div>
+          <div class="axis-cap" aria-hidden="true"><div></div><div><span class="l" id="cap-l">← Duo 多得</span><span class="r" id="cap-r">18 Pro Max 多得 →</span></div><div></div></div>
           <div id="bars"></div>
-          <div class="btotal"><span>合计（18 Pro Max − Duo）</span><b id="btotal"></b></div>
+          <div class="btotal"><span id="bt-l">合计（18 Pro Max − Duo）</span><b id="btotal"></b></div>
         </div>
 
         <div class="res">
@@ -366,13 +399,19 @@ button.grow .nm { font-weight: 600; }
   ];
   var PROFILES = {
     solo: { daily: 35, own: 20, assure: 30, cost: 15 },
-    backup: { daily: 35, own: 25, assure: 20, cost: 20 },
-    second: { daily: 20, own: 40, assure: 10, cost: 30 }
+    backup: { daily: 35, own: 25, assure: 20, cost: 20 }
   };
-  var NOVS = [{ id: 'keep', label: '保持', f: 1 }, { id: 'half', label: '减半', f: 0.5 }, { id: 'fade', label: '明显消退', f: 0.2 }];
   var SOFTS = [{ id: 'now', label: '现状' }, { id: 'part', label: '部分改善' }, { id: 'custom', label: '自设' }];
   var STATUS = [['', '—'], ['ok', '可独立完成'], ['cost', '代价不可接受'], ['dev', '须借助另一台']];
+  var TOLS = [['', '待定'], ['ok', '可以承受'], ['no', '无法承受']];
   var TASKS0 = ['微信', '抖音', '通信', '支付', '导航'];
+  var MF = [
+    ['refund', '退款可得', '仍可获得的退货退款'],
+    ['sale', '出售或折抵', '可实现的出售或折抵金额；与退款取较高者，不叠加'],
+    ['resid', '期末残值', '持有期末的预期残值'],
+    ['extra', '额外费用', '额外设备、配件与服务费用'],
+    ['buy', '另购设备', '该方案下另购设备的费用']
+  ];
 
   var ITEMS = {
     task: { n: '高频任务可用性', s: '任务可用', soft: 1, pm: 5, duo: 1.5, h: '微信、抖音、通信、支付、导航等必要任务能否正常完成；App 无法全屏也算在这里' },
@@ -384,33 +423,48 @@ button.grow .nm { font-weight: 600; }
     disp: { n: '展开大屏价值', s: '大屏', pm: 3, duo: 5, c: 1, h: '结合实际使用频率、替代方案和收益，不因拥有这个功能就给高分' },
     split: { n: '分屏与多任务价值', s: '分屏', pm: 1, duo: 4.5, c: 1, h: '结合实际使用频率、替代方案和收益' },
     half: { n: '半折叠与 StandBy 价值', s: '半折叠', pm: 1, duo: 4.5, c: 1, h: '半折叠形态及 StandBy 等独特功能，结合使用频率和收益' },
-    nov: { n: '新鲜感（短期兴奋）', s: '新鲜感', nov: 1, pm: 3, duo: 5, h: '短期兴奋；随新鲜感情景缩放，不影响审美与材质' },
-    trust: { n: '硬件可靠性信任', s: '可靠信任', pm: 5, duo: 2, c: 1, h: '你对结构、屏幕等长期稳定性的主观判断，不等于客观故障率' },
-    recov: { n: '故障后恢复便利', s: '故障恢复', mit: 1, pm: null, duo: null, h: '维修、换机、数据、账号及通信恢复的负担' },
-    down: { n: '停机后果', s: '停机后果', mit: 1, pm: null, duo: null, h: '无备用机时，停机对必要事务的影响；与故障发生的可能性分开评价' },
-    newc: { n: '今日起新增成本', s: '新增成本', pm: null, duo: null, h: '从今天开始需要新增承担的成本，5 = 负担小；已付出的钱不计入' },
-    extra: { n: '额外设备与配件服务', s: '额外成本', pm: null, duo: null, h: '额外设备、配件及服务成本，5 = 负担小' },
-    exit: { n: '折旧与退出成本', s: '退出成本', pm: 4, duo: 3, c: 1, h: '未来折旧、换机与退出成本，5 = 负担小；价格与残值请自行判断' }
+    nov: { n: '新鲜感（短期兴奋）', s: '新鲜感', nov: 1, pm: 3, duo: 5, h: '短期兴奋，1 分 = 无额外愉悦；只受上方新鲜感保留设置影响，不影响审美与材质' },
+    trust: { n: '硬件可靠性信任', s: '可靠信任', pm: 5, duo: 2, c: 1, h: '你对故障发生可能性的主观判断，不等于客观故障率；故障后的恢复与停机另算' },
+    recov: { n: '故障后恢复便利', s: '故障恢复', pm: null, duo: null, h: '故障后恢复使用所需的时间、操作与服务负担；不重复评价故障发生的可能性' },
+    worth: { n: '支出值得度', s: '值得度', pm: null, duo: null, h: '对各方案净金额差异的主观感受，只在这里计一次；金额明细单独计算' },
+    exit: { n: '退出与转换灵活性', s: '退出灵活', pm: 4, duo: 3, c: 1, h: '转手、换机、回退的便利程度；金额差异在金额明细中计算' },
+    sbig: { sec: 1, n: '新增大屏体验', s: '新增大屏', h: '实际多出来的大屏价值，不含现有主力机已能替代的部分；0 = 没有增量' },
+    ssplit: { sec: 1, n: '新增分屏与多任务', s: '新增分屏', h: '实际多出来的价值，不含现有主力机已能替代的部分' },
+    shalf: { sec: 1, n: '新增半折叠与 StandBy', s: '新增半折叠', h: '实际多出来的价值，不含现有主力机已能替代的部分' },
+    saes: { sec: 1, n: '审美、材质与拥有愉悦', s: '拥有愉悦', h: '精致外观、钛金属质感与把玩的快乐' },
+    scarry: { sec: 1, n: '额外携带负担', s: '携带负担', h: '多带一台设备的负担；0 = 没有额外负担' },
+    scharge: { sec: 1, n: '充电与维护负担', s: '充电维护', h: '额外充电、更新与维护的负担' },
+    sswitch: { sec: 1, n: '设备切换负担', s: '切换负担', h: '在两台设备之间切换、同步的负担' },
+    sopp: { sec: 1, n: '保留的机会成本', s: '机会成本', h: '放弃退款或出售的主观感受；金额在金额明细中计算，这里不重复评价金额' },
+    sexit: { sec: 1, n: '未来退出成本', s: '退出成本', h: '以后转手、折价与处理的麻烦程度；金额在金额明细中计算' }
   };
   var DEF = [
     { k: 'daily', name: '日常使用质量', keys: ['task', 'fric', 'phys', 'batt', 'cam'] },
     { k: 'own', name: '独特体验与拥有价值', keys: ['aes', 'disp', 'split', 'half', 'nov'] },
-    { k: 'assure', name: '使用保障', keys: ['trust', 'recov', 'down'] },
-    { k: 'cost', name: '持有成本与灵活性', keys: ['newc', 'extra', 'exit'] }
+    { k: 'assure', name: '使用保障', keys: ['trust', 'recov'] },
+    { k: 'cost', name: '持有成本与灵活性', keys: ['worth', 'exit'] }
   ];
-  var KEY = 'phone-matrix-v4', OLDKEY = 'phone-matrix-v3';
+  var SDEF = [
+    { k: 'sgain', name: '增量收益', sign: 1, w: 50, keys: ['sbig', 'ssplit', 'shalf', 'saes'] },
+    { k: 'sburden', name: '额外负担', sign: -1, w: 25, keys: ['scarry', 'scharge', 'sswitch'] },
+    { k: 'sopp', name: '机会与退出', sign: -1, w: 25, keys: ['sopp', 'sexit'] }
+  ];
+  var KEY = 'phone-matrix-v5', KEY4 = 'phone-matrix-v4', KEY3 = 'phone-matrix-v3';
   var uid = 0;
   function nid(p) { uid++; return p + uid; }
 
   /* ---------- helpers ---------- */
   function $(id) { return document.getElementById(id); }
   function f2(x) { return x.toFixed(2); }
-  function sgn(x) { return (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(2); }
+  function sgn(x) { return (x >= -0.0049 ? '+' : '−') + Math.abs(x).toFixed(2); }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function sum(a) { return a.reduce(function (x, y) { return x + y; }, 0); }
   function num(v, lo, hi) { return typeof v === 'number' && isFinite(v) && v >= lo && v <= hi; }
+  function nz(v) { return v === null || v === undefined; }
   function sc1(v) { return v === null || num(v, 1, 5); }
   function tip(t) { return t ? ' title="' + esc(t) + '"' : ''; }
+  function pct(x) { return Math.round(x * 100); }
+  function money(x) { return (x < 0 ? '−' : (x > 0 ? '+' : '')) + Math.abs(x).toLocaleString('en-US', { maximumFractionDigits: 2 }); }
   function lrm(ws, total) {
     var fl = ws.map(function (w) { return Math.floor(w + 1e-9); });
     var rem = total - sum(fl);
@@ -424,13 +478,19 @@ button.grow .nm { font-weight: 600; }
     var n = it.name || '未命名';
     return n.length > 6 ? n.slice(0, 6) + '…' : n;
   }
-  function counted(it) { return it.on !== false && it.pm !== null && it.duo !== null; }
-  function pending(it) { return it.on !== false && (it.pm === null || it.duo === null); }
+  function isSec() { return S.role === 'second'; }
+  function GS() { return isSec() ? S.sec.groups : S.groups; }
+  function secKnown(it, g) { return !nz(it.v) && (g.sign < 0 || !nz(it.u)); }
+  function known(it, g) { return isSec() ? secKnown(it, g) : (it.pm !== null && it.duo !== null); }
+  function isPend(it, g) { return it.on !== false && !known(it, g); }
   function mkItem(k) {
     var K = ITEMS[k];
-    return { id: nid('i'), k: k, name: K.n, w: 0, pm: K.pm, duo: K.duo, c: K.c ? 1 : 0, on: true, lock: false };
+    var it = { id: nid('i'), k: k, name: K.n, w: 0, c: K.c ? 1 : 0, on: true, lock: false };
+    if (K.sec) { it.v = null; it.u = null; } else { it.pm = K.pm; it.duo = K.duo; }
+    return it;
   }
   function roleLabel() { return ROLES.filter(function (r) { return r.id === S.role; })[0].label; }
+  function blankM() { return { refund: null, sale: null, resid: null, extra: null, buy: null }; }
 
   /* ---------- state ---------- */
   function defaults() {
@@ -441,63 +501,84 @@ button.grow .nm { font-weight: 600; }
       if (g.k === 'daily') items.push({ id: nid('i'), k: '', name: 'Face ID', w: 0, pm: 5, duo: 3, c: 0, on: false, lock: false });
       return { id: nid('g'), k: g.k, name: g.name, w: 0, lock: false, items: items };
     });
-    var st = { role: 'solo', nov: 'keep', soft: 'now', softX: 50, mit: 60, groups: groups, ws: {}, tasks: [] };
-    ROLES.forEach(function (r) {
-      st.ws[r.id] = {};
-      groups.forEach(function (g) { st.ws[r.id][g.id] = PROFILES[r.id][g.k]; });
+    var sec = { groups: SDEF.map(function (g) {
+      var items = g.keys.map(mkItem);
+      items.forEach(function (it) { it.w = 100 / items.length; });
+      return { id: nid('g'), k: g.k, name: g.name, sign: g.sign, w: g.w, lock: false, items: items };
+    }) };
+    var st = { v: 5, role: 'solo', novR: { pm: 100, duo: 100 }, soft: 'now', softX: 50, tol: '', hold: 24,
+               money: { pm: blankM(), duo: blankM() }, groups: groups, ws: {}, sec: sec, tasks: [] };
+    ['solo', 'backup'].forEach(function (r) {
+      st.ws[r] = {};
+      groups.forEach(function (g) { st.ws[r][g.id] = PROFILES[r][g.k]; });
     });
     groups.forEach(function (g) { g.w = st.ws.solo[g.id]; });
     TASKS0.forEach(function (n) { st.tasks.push({ id: nid('t'), name: n, on: true, pm: '', duo: '' }); });
     return st;
   }
-  function validState(st) {
-    if (!st || typeof st !== 'object') return false;
-    if (!ROLES.some(function (r) { return r.id === st.role; })) return false;
-    if (!NOVS.some(function (n) { return n.id === st.nov; }) || !SOFTS.some(function (n) { return n.id === st.soft; })) return false;
-    if (!num(st.softX, 0, 100) || !num(st.mit, 0, 100)) return false;
-    if (!Array.isArray(st.groups) || !st.groups.length || st.groups.length > 12) return false;
-    var gs = 0, i, j;
-    for (i = 0; i < st.groups.length; i++) {
-      var g = st.groups[i];
+  function validGroups(gs, sec) {
+    if (!Array.isArray(gs) || !gs.length || gs.length > 12) return false;
+    var tot = 0, i, j;
+    for (i = 0; i < gs.length; i++) {
+      var g = gs[i];
       if (!g || typeof g.id !== 'string' || typeof g.name !== 'string' || !num(g.w, 0, 100)) return false;
+      if (sec && g.sign !== 1 && g.sign !== -1) return false;
       if (!Array.isArray(g.items) || !g.items.length || g.items.length > 20) return false;
       var is = 0;
       for (j = 0; j < g.items.length; j++) {
         var it = g.items[j];
-        if (!it || typeof it.id !== 'string' || typeof it.name !== 'string' || !num(it.w, 0, 100) || !sc1(it.pm) || !sc1(it.duo)) return false;
+        if (!it || typeof it.id !== 'string' || typeof it.name !== 'string' || !num(it.w, 0, 100)) return false;
+        if (sec) { if (!(nz(it.v) || num(it.v, 0, 5)) || !(nz(it.u) || num(it.u, 0, 100))) return false; }
+        else if (!sc1(it.pm) || !sc1(it.duo)) return false;
         if (it.k && !ITEMS[it.k]) return false;
         is += it.w;
       }
       if (Math.abs(is - 100) > 0.5) return false;
-      gs += g.w;
+      tot += g.w;
     }
-    if (Math.abs(gs - 100) > 0.5) return false;
+    return Math.abs(tot - 100) <= 0.5;
+  }
+  function validState(st) {
+    if (!st || typeof st !== 'object') return false;
+    if (!ROLES.some(function (r) { return r.id === st.role; })) return false;
+    if (!st.novR || !num(st.novR.pm, 0, 100) || !num(st.novR.duo, 0, 100)) return false;
+    if (!SOFTS.some(function (n) { return n.id === st.soft; }) || !num(st.softX, 0, 100)) return false;
+    if (['', 'ok', 'no'].indexOf(st.tol) < 0 || !num(st.hold, 1, 120)) return false;
+    if (!st.money || typeof st.money !== 'object') return false;
+    var okM = true;
+    ['pm', 'duo'].forEach(function (p) {
+      if (!st.money[p] || typeof st.money[p] !== 'object') { okM = false; return; }
+      MF.forEach(function (f) { var v = st.money[p][f[0]]; if (!(nz(v) || (typeof v === 'number' && isFinite(v)))) okM = false; });
+    });
+    if (!okM) return false;
+    if (!validGroups(st.groups, false) || !st.sec || !validGroups(st.sec.groups, true)) return false;
     if (!Array.isArray(st.tasks) || st.tasks.length > 20) return false;
     var okS = ['', 'ok', 'cost', 'dev'];
-    for (i = 0; i < st.tasks.length; i++) {
+    for (var i = 0; i < st.tasks.length; i++) {
       var t = st.tasks[i];
       if (!t || typeof t.id !== 'string' || typeof t.name !== 'string' || okS.indexOf(t.pm) < 0 || okS.indexOf(t.duo) < 0) return false;
     }
     return !!st.ws && typeof st.ws === 'object';
   }
   function repair(st) {
-    st.groups.forEach(function (g) {
+    function ids(g) {
       g.name = g.name.slice(0, 20);
       var m = /(\d+)$/.exec(g.id); if (m) uid = Math.max(uid, +m[1]);
       g.items.forEach(function (it) { it.name = it.name.slice(0, 20); var n2 = /(\d+)$/.exec(it.id); if (n2) uid = Math.max(uid, +n2[1]); });
-    });
+    }
+    st.groups.forEach(ids); st.sec.groups.forEach(function (g) { ids(g); g.items.forEach(function (it) { if (it.u === undefined) it.u = null; if (it.v === undefined) it.v = null; }); });
     st.tasks.forEach(function (t) { t.name = t.name.slice(0, 20); t.on = t.on !== false; var m = /(\d+)$/.exec(t.id); if (m) uid = Math.max(uid, +m[1]); });
-    ROLES.forEach(function (r) {
-      var w = st.ws[r.id], ok = w && typeof w === 'object';
+    ['solo', 'backup'].forEach(function (r) {
+      var w = st.ws[r], ok = w && typeof w === 'object';
       if (ok) {
         var tot = 0;
         st.groups.forEach(function (g) { if (!num(w[g.id], 0, 100)) ok = false; else tot += w[g.id]; });
         if (ok && Math.abs(tot - 100) > 0.5) ok = false;
       }
-      if (!ok) { st.ws[r.id] = {}; st.groups.forEach(function (g) { st.ws[r.id][g.id] = g.w; }); }
+      if (!ok) { st.ws[r] = {}; st.groups.forEach(function (g) { st.ws[r][g.id] = g.w; }); }
     });
-    var cur = {}; st.groups.forEach(function (g) { cur[g.id] = g.w; });
-    st.ws[st.role] = cur;
+    delete st.ws.second;
+    if (st.role !== 'second') { var cur = {}; st.groups.forEach(function (g) { cur[g.id] = g.w; }); st.ws[st.role] = cur; }
   }
 
   /* weights */
@@ -516,7 +597,6 @@ button.grow .nm { font-weight: 600; }
     arr[k].w = v;
     free.forEach(function (x) { x.w = Rs > 0 ? R * x.r / Rs : R / free.length; });
   }
-  /* after a removal: free items take the leftover; if everything left is locked and short of the total, release the locks */
   function rebalance(arr, total) {
     var released = false;
     var free = arr.filter(function (x) { return !x.lock; });
@@ -538,26 +618,25 @@ button.grow .nm { font-weight: 600; }
     obj.w = nw; arr.push(obj);
   }
   function wsOf() { var o = {}; S.groups.forEach(function (g) { o[g.id] = g.w; }); return o; }
-  function stash() { S.ws[S.role] = wsOf(); }
+  function stash() { if (S.role !== 'second') S.ws[S.role] = wsOf(); }
+  function otherMain() { return S.role === 'solo' ? ['backup'] : (S.role === 'backup' ? ['solo'] : ['solo', 'backup']); }
   function wsAdd(id, m) {
-    ROLES.forEach(function (r) {
-      if (r.id === S.role) return;
-      var w = S.ws[r.id]; Object.keys(w).forEach(function (k) { w[k] = w[k] * m / (m + 1); }); w[id] = 100 / (m + 1);
+    otherMain().forEach(function (r) {
+      var w = S.ws[r]; Object.keys(w).forEach(function (k) { w[k] = w[k] * m / (m + 1); }); w[id] = 100 / (m + 1);
     });
   }
   function wsDel(id) {
-    ROLES.forEach(function (r) {
-      if (r.id === S.role) return;
-      var w = S.ws[r.id]; delete w[id];
+    otherMain().forEach(function (r) {
+      var w = S.ws[r]; delete w[id];
       var ks = Object.keys(w), s = sum(ks.map(function (k) { return w[k]; }));
       ks.forEach(function (k) { w[k] = s > 1e-9 ? w[k] * 100 / s : 100 / ks.length; });
     });
   }
-
-  function findG(id) { for (var i = 0; i < S.groups.length; i++) if (S.groups[i].id === id) return i; return -1; }
+  function findG(id) { var gs = GS(); for (var i = 0; i < gs.length; i++) if (gs[i].id === id) return i; return -1; }
   function findI(id) {
-    for (var i = 0; i < S.groups.length; i++)
-      for (var j = 0; j < S.groups[i].items.length; j++) if (S.groups[i].items[j].id === id) return { gi: i, ii: j };
+    var gs = GS();
+    for (var i = 0; i < gs.length; i++)
+      for (var j = 0; j < gs[i].items.length; j++) if (gs[i].items[j].id === id) return { gi: i, ii: j };
     return null;
   }
   function findK(st, k) {
@@ -566,8 +645,8 @@ button.grow .nm { font-weight: 600; }
     return null;
   }
 
-  /* carry scores over from the previous version; anything that no longer maps one-to-one is flagged for confirmation */
-  function migrate(o) {
+  /* ---------- migration ---------- */
+  function migrate(o) {   /* from v3 */
     if (!o || !Array.isArray(o.groups)) return null;
     var s = defaults(), found = {}, custom = [];
     o.groups.forEach(function (g) {
@@ -585,11 +664,40 @@ button.grow .nm { font-weight: 600; }
     if (found.stab && found.rot) put('fric', { pm: h((found.stab.pm + found.rot.pm) / 2), duo: h((found.stab.duo + found.rot.duo) / 2) }, 1);
     else put('fric', found.stab || found.rot, 1);
     var face = found.face; if (face) { var f = findK(s, ''); if (f) { f.pm = face.pm; f.duo = face.duo; } }
-    var daily = s.groups[0];
     custom.forEach(function (c) {
-      if (daily.items.length >= 20) return;
-      addShare(daily.items, { id: nid('i'), k: '', name: c.n, w: 0, pm: c.pm, duo: c.duo, c: 1, on: false, lock: false }, 100);
+      if (s.groups[0].items.length >= 20) return;
+      addShare(s.groups[0].items, { id: nid('i'), k: '', name: c.n, w: 0, pm: c.pm, duo: c.duo, c: 1, on: false, lock: false }, 100);
     });
+    return s;
+  }
+  function migrate4(o) {  /* from v4: keep every score; retired items become switched-off custom items awaiting confirmation */
+    if (!o || !Array.isArray(o.groups) || !Array.isArray(o.tasks)) return null;
+    var s = JSON.parse(JSON.stringify(o)), d = defaults();
+    uid = 0;
+    s.groups.forEach(function (g) {
+      (g.id || '').replace(/(\d+)$/, function (_, n) { uid = Math.max(uid, +n); });
+      (g.items || []).forEach(function (it) {
+        (it.id || '').replace(/(\d+)$/, function (_, n) { uid = Math.max(uid, +n); });
+        if (it.k === 'down' || it.k === 'newc' || it.k === 'extra') {
+          it.name = String(it.name || '').slice(0, 17) + '（旧）'; it.k = ''; it.on = false;
+          it.c = (it.pm !== null && it.pm !== undefined) || (it.duo !== null && it.duo !== undefined) ? 1 : 0;
+        }
+        if (it.k === 'exit' && it.name === '折旧与退出成本') it.name = ITEMS.exit.n;
+        if (it.k === 'recov' && (it.pm !== null || it.duo !== null)) it.c = 1;
+      });
+    });
+    var cg = null;
+    s.groups.forEach(function (g) { if (g.k === 'cost') cg = g; });
+    if (cg && !cg.items.some(function (x) { return x.k === 'worth'; }) && cg.items.length < 20) {
+      var it = { id: 'i' + (++uid), k: 'worth', name: ITEMS.worth.n, w: 0, pm: null, duo: null, c: 0, on: true, lock: false };
+      addShare(cg.items, it, 100);
+    }
+    var nv = { keep: [100, 100], half: [100, 50], fade: [100, 20] }[s.nov] || [100, 100];
+    s.novR = { pm: nv[0], duo: nv[1] };
+    delete s.nov; delete s.mit;
+    s.tol = ''; s.hold = 24; s.money = { pm: blankM(), duo: blankM() }; s.v = 5;
+    var sd = d.sec; s.sec = sd;
+    uid = Math.max(uid, 0);
     return s;
   }
 
@@ -598,8 +706,12 @@ button.grow .nm { font-weight: 600; }
     var raw = localStorage.getItem(KEY);
     if (raw) { var p = JSON.parse(raw); if (validState(p)) { S = p; repair(p); } }
     else {
-      var oldRaw = localStorage.getItem(OLDKEY);
-      if (oldRaw) { var m = migrate(JSON.parse(oldRaw)); if (m && validState(m)) { S = m; repair(m); } }
+      var raw4 = localStorage.getItem(KEY4);
+      if (raw4) { var m4 = migrate4(JSON.parse(raw4)); if (m4 && validState(m4)) { S = m4; repair(m4); } }
+      else {
+        var raw3 = localStorage.getItem(KEY3);
+        if (raw3) { var m3 = migrate(JSON.parse(raw3)); if (m3 && validState(m3)) { S = m3; repair(m3); } }
+      }
     }
   } catch (e) { S = null; }
   if (!S) S = defaults();
@@ -607,54 +719,119 @@ button.grow .nm { font-weight: 600; }
 
   /* ---------- scoring ---------- */
   function scen(over) {
-    var o = {
-      f: NOVS.filter(function (n) { return n.id === S.nov; })[0].f,
-      x: S.soft === 'now' ? 0 : (S.soft === 'part' ? 0.5 : S.softX / 100),
-      backup: S.role === 'backup',
-      m: S.mit / 100
-    };
+    var o = { rp: S.novR.pm / 100, rd: S.novR.duo / 100, x: S.soft === 'now' ? 0 : (S.soft === 'part' ? 0.5 : S.softX / 100) };
     if (over) Object.keys(over).forEach(function (k) { o[k] = over[k]; });
     return o;
   }
-  function es(it, sc) {
-    var a = it.pm, b = it.duo, K = (it.k && ITEMS[it.k]) || {};
-    if (K.nov) { var mid = (a + b) / 2; a = mid + (a - mid) * sc.f; b = mid + (b - mid) * sc.f; }
+  function esv(K, a, b, sc) {
+    if (K.nov) { a = 1 + (a - 1) * sc.rp; b = 1 + (b - 1) * sc.rd; }
     if (K.soft) {
       if (sc.x >= 0) { if (a > b) b = b + sc.x * (a - b); }
       else b = Math.max(1, b + sc.x * (b - 1));
     }
-    if (K.mit && sc.backup) { a += (5 - a) * sc.m; b += (5 - b) * sc.m; }
-    return { pm: a, duo: b };
+    return [a, b];
   }
-  /* Totals. Pending or switched-off items drop out; a category's weight stays and its counted items share it. */
+  /* Pending items keep their planned weight. Only items switched off are left out (and the rest re-scaled).
+     The shown total covers the rated part (a provisional figure); lo/hi bound what the unrated part could add. */
   function calc(sc, gwo) {
-    var gs = [], F = [], W = 0;
+    var gs = [], W = 0;
     S.groups.forEach(function (g) {
-      var w = gwo ? gwo[g.id] : g.w, its = [], sw = 0;
-      g.items.forEach(function (it) {
-        if (counted(it)) { var e = es(it, sc); its.push({ it: it, pm: e.pm, duo: e.duo }); sw += it.w; }
-      });
-      if (its.length) {
-        its.forEach(function (x) { x.sh = sw > 1e-9 ? x.it.w / sw : 1 / its.length; });
-        gs.push({ g: g, w: w, its: its }); W += w;
-      }
+      var act = g.items.filter(function (it) { return it.on !== false; });
+      if (!act.length) return;
+      var w = gwo ? gwo[g.id] : g.w;
+      gs.push({ g: g, w: w, its: act, sw: sum(act.map(function (x) { return x.w; })) }); W += w;
     });
-    if (!gs.length) return { pm: 0, duo: 0, F: [], gs: [], ok: false };
-    var tp = 0, td = 0;
+    var res = { mode: 'main', ok: false, complete: false, C: 0, pm: 0, duo: 0, pmI: [0, 0], duoI: [0, 0], dI: [0, 0], F: [], gs: gs, eff: {}, nPend: 0 };
+    if (!gs.length) return res;
+    var pmK = 0, duoK = 0, Cw = 0, pl = 0, ph = 0, ql = 0, qh = 0, dl = 0, dh = 0;
     gs.forEach(function (G) {
-      var gw = W > 1e-9 ? G.w / W : 1 / gs.length;
-      G.gw = gw; G.pm = 0; G.duo = 0;
-      G.its.forEach(function (x) {
-        G.pm += x.sh * x.pm; G.duo += x.sh * x.duo;
-        x.eff = gw * x.sh; x.g = G.g; x.s = short(x.it); x.c = x.eff * (x.pm - x.duo);
-        F.push(x);
+      var gw = W > 1e-9 ? G.w / W : 1 / gs.length; G.gw = gw; G.F = []; G.c = 0;
+      G.its.forEach(function (it) {
+        var sh = G.sw > 1e-9 ? it.w / G.sw : 1 / G.its.length, eff = gw * sh, K = (it.k && ITEMS[it.k]) || {};
+        res.eff[it.id] = eff;
+        var A = it.pm === null ? [1, 5] : [it.pm], B = it.duo === null ? [1, 5] : [it.duo];
+        var amin = 9, amax = -9, bmin = 9, bmax = -9, dmin = 9, dmax = -9, e;
+        A.forEach(function (a) { B.forEach(function (b) {
+          e = esv(K, a, b, sc);
+          amin = Math.min(amin, e[0]); amax = Math.max(amax, e[0]);
+          bmin = Math.min(bmin, e[1]); bmax = Math.max(bmax, e[1]);
+          dmin = Math.min(dmin, e[0] - e[1]); dmax = Math.max(dmax, e[0] - e[1]);
+        }); });
+        pl += eff * amin; ph += eff * amax; ql += eff * bmin; qh += eff * bmax; dl += eff * dmin; dh += eff * dmax;
+        if (it.pm !== null && it.duo !== null) {
+          e = esv(K, it.pm, it.duo, sc);
+          var x = { it: it, g: G.g, eff: eff, pm: e[0], duo: e[1], s: short(it) };
+          G.F.push(x); res.F.push(x); Cw += eff; pmK += eff * e[0]; duoK += eff * e[1];
+        } else res.nPend++;
       });
-      G.c = gw * (G.pm - G.duo);
-      tp += gw * G.pm; td += gw * G.duo;
     });
-    return { pm: tp, duo: td, F: F, gs: gs, ok: true };
+    res.C = Cw; res.complete = 1 - Cw < 1e-6;
+    res.pmI = [pl, ph]; res.duoI = [ql, qh]; res.dI = [dl, dh];
+    if (Cw > 1e-9) {
+      res.ok = true; res.pm = pmK / Cw; res.duo = duoK / Cw;
+      res.F.forEach(function (x) { x.c = x.eff / Cw * (x.pm - x.duo); });
+      gs.forEach(function (G) { G.c = sum(G.F.map(function (x) { return x.c; })); });
+    }
+    return res;
   }
-  function dOf(r) { return r.pm - r.duo; }
+  /* Second device: gains minus burdens of owning Duo on top of the existing main phone (0 = no increment). */
+  function calcSec(over, gwo) {
+    var gk = over && over.gk != null ? over.gk : 1, gs = [], W = 0;
+    S.sec.groups.forEach(function (g) {
+      var act = g.items.filter(function (it) { return it.on !== false; });
+      if (!act.length) return;
+      var w = gwo ? gwo[g.id] : g.w;
+      gs.push({ g: g, w: w, its: act, sw: sum(act.map(function (x) { return x.w; })) }); W += w;
+    });
+    var res = { mode: 'sec', ok: false, complete: false, C: 0, net: 0, I: [0, 0], F: [], gs: gs, eff: {}, nPend: 0 };
+    if (!gs.length) return res;
+    var Cw = 0, lo = 0, hi = 0, net = 0;
+    gs.forEach(function (G) {
+      var gw = W > 1e-9 ? G.w / W : 1 / gs.length, sign = G.g.sign > 0 ? 1 : -1; G.gw = gw; G.F = []; G.c = 0; G.d = 0;
+      G.its.forEach(function (it) {
+        var sh = G.sw > 1e-9 ? it.w / G.sw : 1 / G.its.length, eff = gw * sh;
+        res.eff[it.id] = eff;
+        var vs = nz(it.v) ? [0, 5] : [it.v], us = sign > 0 ? (nz(it.u) ? [0, 100] : [it.u]) : [100], mn = 99, mx = -99;
+        vs.forEach(function (v) { us.forEach(function (u) { var val = sign > 0 ? gk * v * u / 100 : v; mn = Math.min(mn, val); mx = Math.max(mx, val); }); });
+        if (sign > 0) { lo += eff * mn; hi += eff * mx; } else { lo -= eff * mx; hi -= eff * mn; }
+        if (secKnown(it, G.g)) {
+          var val = sign > 0 ? gk * it.v * it.u / 100 : it.v, signed = sign * eff * val;
+          var x = { it: it, g: G.g, eff: eff, val: val, sign: sign, signed: signed, s: short(it), c: -signed, d: signed };
+          G.F.push(x); res.F.push(x); Cw += eff; net += signed; G.c += x.c; G.d += signed;
+        } else res.nPend++;
+      });
+    });
+    res.C = Cw; res.complete = 1 - Cw < 1e-6; res.net = net; res.I = [lo, hi]; res.ok = res.F.length > 0;
+    return res;
+  }
+  function run(over, gwo) { return isSec() ? calcSec(over, gwo) : calc(scen(over), gwo); }
+  function D(R) { return R.mode === 'sec' ? R.net : R.pm - R.duo; }
+  function DI(R) { return R.mode === 'sec' ? R.I : R.dI; }
+
+  /* money: net position from today for each option */
+  function mv(p, k) { var v = S.money[p][k]; return nz(v) ? 0 : v; }
+  function exitVal(p) { return Math.max(mv(p, 'refund'), mv(p, 'sale')); }
+  function moneyCalc() {
+    var m = S.money, filled = 0, miss = 0, o = { any: false, sec: isSec() };
+    ['pm', 'duo'].forEach(function (p) {
+      if (isSec() && p === 'pm') return;
+      MF.forEach(function (f) { if (nz(m[p][f[0]])) miss++; else filled++; });
+    });
+    o.any = filled > 0; o.miss = miss;
+    function keep(p, other) { return exitVal(other) + mv(p, 'resid') - mv(p, 'extra') - mv(p, 'buy'); }
+    if (isSec()) {
+      o.A = exitVal('duo'); o.B = mv('duo', 'resid') - mv('duo', 'extra') - mv('duo', 'buy');
+      o.diff = o.B - o.A;
+    } else {
+      o.pm = keep('pm', 'duo'); o.duo = keep('duo', 'pm'); o.diff = o.duo - o.pm;
+    }
+    return o;
+  }
+  function moneyLine() {
+    var M = moneyCalc();
+    if (!M.any) return '';
+    return '净经济差（保留 Duo − ' + (M.sec ? '仅主力机' : '保留 18 Pro Max') + '）：' + money(M.diff) + (M.miss ? '（未填 ' + M.miss + ' 项，按 0 计）' : '');
+  }
 
   /* ---------- gate ---------- */
   function gateInfo() {
@@ -670,7 +847,7 @@ button.grow .nm { font-weight: 600; }
     return res;
   }
   function gateHtml(G) {
-    if (S.role === 'second' || !G.n) return '';
+    if (isSec() || !G.n) return '';
     if (G.bad.length) {
       var nm = esc(G.bad.join('、'));
       return S.role === 'solo'
@@ -680,42 +857,67 @@ button.grow .nm { font-weight: 600; }
     if (G.pend) return '<div class="gate pending">任务待标记 ' + G.pend + ' 项</div>';
     return S.role === 'solo' ? '<div class="gate ok">满足唯一主力机要求</div>' : '';
   }
+  function tolNote() {
+    if (isSec()) return { t: '', bad: false };
+    if (S.tol === 'no') return S.role === 'solo' ? { t: '无备用机时无法承受停机：两台手机都一样，需要备用机', bad: true } : { t: '停机风险由备用机承担', bad: false };
+    return { t: '', bad: false };
+  }
 
   /* ---------- inputs ---------- */
   var openIn = {};
   var lockSvg = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>';
-  function statusOpts(v) {
-    return STATUS.map(function (s) { return '<option value="' + s[0] + '"' + (s[0] === v ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('');
+  function optsHtml(list, v) {
+    return list.map(function (s) { return '<option value="' + s[0] + '"' + (s[0] === v ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('');
   }
+  function numVal(v) { return nz(v) ? '' : String(v); }
   function buildGate() {
-    var open = !!openIn.gate;
-    var h = '<section class="grp"><div class="grp-head"><div class="grp-top">' +
-      '<button type="button" class="gtog wide' + (open ? ' open' : '') + '" data-toggle-gate="1" aria-expanded="' + open + '"><i class="chev"></i><span>必要任务</span></button>' +
-      '<span class="gsum" id="gsum"></span></div></div>' +
-      '<div class="grp-body"' + (open ? '' : ' hidden') + '>';
-    h += '<div class="tcap" aria-hidden="true"><span></span><span></span><span class="pm">18 Pro Max</span><span class="duo">Duo</span><span></span></div>';
-    S.tasks.forEach(function (t) {
-      h += '<div class="trow' + (t.on ? '' : ' off') + '" id="tr-' + t.id + '">' +
-        '<input type="checkbox" class="ck" data-ck-t="' + t.id + '"' + (t.on ? ' checked' : '') + ' aria-label="作为必要任务">' +
-        '<input class="nm-in" type="text" maxlength="20" value="' + esc(t.name) + '" data-name-t="' + t.id + '" placeholder="任务名称" aria-label="任务名称">' +
-        '<select class="pm" data-sel-t="' + t.id + '" data-p="pm" aria-label="18 Pro Max 完成情况">' + statusOpts(t.pm) + '</select>' +
-        '<select class="duo" data-sel-t="' + t.id + '" data-p="duo" aria-label="Duo 完成情况">' + statusOpts(t.duo) + '</select>' +
-        '<button type="button" class="ib x" data-del-t="' + t.id + '" aria-label="删除任务">×</button></div>';
+    var h = '', sec = isSec();
+    if (!sec) {
+      var open = !!openIn.gate;
+      h += '<section class="grp"><div class="grp-head"><div class="grp-top">' +
+        '<button type="button" class="gtog wide' + (open ? ' open' : '') + '" data-toggle-gate="1" aria-expanded="' + open + '"><i class="chev"></i><span>必要任务与门槛</span></button>' +
+        '<span class="gsum" id="gsum"></span></div></div><div class="grp-body"' + (open ? '' : ' hidden') + '>';
+      h += '<div class="tcap" aria-hidden="true"><span></span><span></span><span class="pm">18 Pro Max</span><span class="duo">Duo</span><span></span></div>';
+      S.tasks.forEach(function (t) {
+        h += '<div class="trow' + (t.on ? '' : ' off') + '" id="tr-' + t.id + '">' +
+          '<input type="checkbox" class="ck" data-ck-t="' + t.id + '"' + (t.on ? ' checked' : '') + ' aria-label="作为必要任务">' +
+          '<input class="nm-in" type="text" maxlength="20" value="' + esc(t.name) + '" data-name-t="' + t.id + '" placeholder="任务名称" aria-label="任务名称">' +
+          '<select class="pm" data-sel-t="' + t.id + '" data-p="pm" aria-label="18 Pro Max 完成情况">' + optsHtml(STATUS, t.pm) + '</select>' +
+          '<select class="duo" data-sel-t="' + t.id + '" data-p="duo" aria-label="Duo 完成情况">' + optsHtml(STATUS, t.duo) + '</select>' +
+          '<button type="button" class="ib x" data-del-t="' + t.id + '" aria-label="删除任务">×</button></div>';
+      });
+      h += '<button type="button" class="add" data-add-t="1">+ 添加任务</button>' +
+        '<div class="msel"><span' + tip('个人门槛，不是手机得分；两台手机同样适用') + '>无备用机时能否承受停机</span><select id="tol" aria-label="停机承受能力">' + optsHtml(TOLS, S.tol) + '</select></div></div></section>';
+    }
+    var mo = !!openIn.money, two = sec ? ' two' : '';
+    h += '<section class="grp"><div class="grp-head"><div class="grp-top">' +
+      '<button type="button" class="gtog wide' + (mo ? ' open' : '') + '" data-toggle-money="1" aria-expanded="' + mo + '"><i class="chev"></i><span>金额明细</span></button>' +
+      '<span class="gsum" id="msum"></span></div></div><div class="grp-body"' + (mo ? '' : ' hidden') + '>' +
+      '<div class="mcap' + two + '" aria-hidden="true"><span></span>' + (sec ? '' : '<span class="pm">保留 18 Pro Max</span>') + '<span class="duo">' + (sec ? '保留 Duo' : '保留 Duo') + '</span></div>';
+    MF.forEach(function (f) {
+      h += '<div class="mrow' + two + '"><span class="ml"' + tip(f[2]) + '>' + (f[0] === 'resid' ? '期末残值（<span id="hold-l">' + S.hold + '</span> 个月）' : f[1]) + '</span>' +
+        (sec ? '' : '<input class="num pm" type="number" inputmode="decimal" step="any" data-m="pm.' + f[0] + '" value="' + numVal(S.money.pm[f[0]]) + '" aria-label="18 Pro Max ' + f[1] + '">') +
+        '<input class="num duo" type="number" inputmode="decimal" step="any" data-m="duo.' + f[0] + '" value="' + numVal(S.money.duo[f[0]]) + '" aria-label="Duo ' + f[1] + '"></div>';
     });
-    h += '<button type="button" class="add" data-add-t="1">+ 添加任务</button></div></section>';
+    h += '<div class="mrow' + two + '"><span class="ml">持有期（月）</span><input class="num" type="number" min="1" max="120" step="1" data-hold="1" value="' + S.hold + '" aria-label="持有期月数"></div>' +
+      '<div class="mrow' + two + '"><span class="ml">' + (sec ? '主力机 + Duo 净值' : '净值（换出另一台 + 残值 − 费用）') + '</span>' +
+      (sec ? '<span class="mnet duo" id="mn-duo"></span>' : '<span class="mnet pm" id="mn-pm"></span><span class="mnet duo" id="mn-duo"></span>') + '</div>' +
+      (sec ? '<div class="mrow two"><span class="ml">仅主力机净值（换出 Duo）</span><span class="mnet pm" id="mn-pm"></span></div>' : '') +
+      '</div></section>';
     $('gate').innerHTML = h;
   }
   function buildInputs() {
-    var h = '';
-    S.groups.forEach(function (g, gi) {
+    var h = '', sec = isSec(), gs = GS();
+    gs.forEach(function (g, gi) {
       var open = !!openIn[g.id], n = g.items.length;
       h += '<section class="grp" data-g="' + g.id + '"><div class="grp-head"><div class="grp-top">' +
         '<button type="button" class="gtog' + (open ? ' open' : '') + '" data-toggle-g="' + g.id + '" aria-expanded="' + open + '" aria-label="展开或收起"><i class="chev"></i></button>' +
         '<input class="nm-in" type="text" maxlength="20" value="' + esc(g.name) + '" data-name-g="' + g.id + '" placeholder="分组名称" aria-label="分组名称">' +
+        (sec ? '<button type="button" class="sg" data-sign-g="' + g.id + '" title="切换收益或负担"></button>' : '') +
         '<span class="gcount" id="gc-' + g.id + '"></span>' +
         '<output class="gout" id="ogw-' + g.id + '"></output>' +
         '<button type="button" class="ib lk" data-lock-g="' + g.id + '" aria-pressed="false" aria-label="锁定权重" title="锁定权重">' + lockSvg + '</button>' +
-        (S.groups.length > 1 ? '<button type="button" class="ib x" data-del-g="' + g.id + '" aria-label="删除分组">×</button>' : '') +
+        (gs.length > 1 ? '<button type="button" class="ib x" data-del-g="' + g.id + '" aria-label="删除分组">×</button>' : '') +
         '</div><input type="range" id="gw-' + g.id + '" min="0" max="100" step="1" aria-label="分组权重"></div><div class="grp-body"' + (open ? '' : ' hidden') + '>';
       g.items.forEach(function (it, ii) {
         var K = it.k && ITEMS[it.k];
@@ -726,12 +928,16 @@ button.grow .nm { font-weight: 600; }
           '<span class="share" id="share-' + it.id + '"></span>' +
           '<button type="button" class="ib lk" data-lock-i="' + it.id + '" aria-pressed="false" aria-label="锁定权重" title="锁定权重">' + lockSvg + '</button>' +
           '<button type="button" class="ib" data-mv="' + it.id + '" data-dir="-1" aria-label="上移"' + (gi === 0 && ii === 0 ? ' disabled' : '') + '>↑</button>' +
-          '<button type="button" class="ib" data-mv="' + it.id + '" data-dir="1" aria-label="下移"' + (gi === S.groups.length - 1 && ii === n - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button type="button" class="ib" data-mv="' + it.id + '" data-dir="1" aria-label="下移"' + (gi === gs.length - 1 && ii === n - 1 ? ' disabled' : '') + '>↓</button>' +
           (n > 1 ? '<button type="button" class="ib x" data-del-i="' + it.id + '" aria-label="删除项目">×</button>' : '') +
-          '</span></div><div class="sliders">' +
+          '</span></div><div class="sliders">';
+        if (!sec) h +=
           '<label class="s pm" id="lp-' + it.id + '" for="pm-' + it.id + '"><span>18 Pro Max</span><output id="o-pm-' + it.id + '"></output><input type="range" id="pm-' + it.id + '" min="1" max="5" step="0.5" data-pend="1"></label>' +
-          '<label class="s duo" id="ld-' + it.id + '" for="duo-' + it.id + '"><span>Duo</span><output id="o-duo-' + it.id + '"></output><input type="range" id="duo-' + it.id + '" min="1" max="5" step="0.5" data-pend="1"></label>' +
-          '<label class="s w" for="iw-' + it.id + '"><span>组内权重</span><output id="o-iw-' + it.id + '"></output><input type="range" id="iw-' + it.id + '" min="0" max="100" step="1"></label>' +
+          '<label class="s duo" id="ld-' + it.id + '" for="duo-' + it.id + '"><span>Duo</span><output id="o-duo-' + it.id + '"></output><input type="range" id="duo-' + it.id + '" min="1" max="5" step="0.5" data-pend="1"></label>';
+        else h +=
+          '<label class="s duo" id="lv-' + it.id + '" for="v-' + it.id + '"><span id="sv-' + it.id + '">增量</span><output id="o-v-' + it.id + '"></output><input type="range" id="v-' + it.id + '" min="0" max="5" step="0.5" data-pend="1"></label>' +
+          '<label class="s duo" id="lu-' + it.id + '" for="u-' + it.id + '"><span>使用占比</span><output id="o-u-' + it.id + '"></output><input type="range" id="u-' + it.id + '" min="0" max="100" step="5" data-pend="1"></label>';
+        h += '<label class="s w" for="iw-' + it.id + '"><span>组内权重</span><output id="o-iw-' + it.id + '"></output><input type="range" id="iw-' + it.id + '" min="0" max="100" step="1"></label>' +
           '</div></div>';
       });
       h += '<button type="button" class="add" data-add-i="' + g.id + '">+ 添加项目</button></div></section>';
@@ -741,7 +947,6 @@ button.grow .nm { font-weight: 600; }
   }
   function buildScen() {
     $('roles').innerHTML = ROLES.map(function (r) { return '<button type="button" data-role="' + r.id + '" aria-pressed="false">' + r.label + '</button>'; }).join('');
-    $('sc-nov').innerHTML = NOVS.map(function (n) { return '<button type="button" data-nov="' + n.id + '" aria-pressed="false">' + n.label + '</button>'; }).join('');
     $('sc-soft').innerHTML = SOFTS.map(function (n) { return '<button type="button" data-soft="' + n.id + '" aria-pressed="false">' + n.label + '</button>'; }).join('');
   }
   function buildAll() { buildGate(); buildInputs(); }
@@ -760,31 +965,35 @@ button.grow .nm { font-weight: 600; }
     toast('已删除「' + (label || '未命名') + '」' + (released ? '，剩余项已解除锁定以保持 100%' : ''), true);
   }
   function focusName(sel) { var el = document.querySelector(sel); if (el) { el.focus(); el.select(); } }
+  function blankItem(name) {
+    var it = { id: nid('i'), k: '', name: name, w: 0, c: 0, on: true, lock: false };
+    if (isSec()) { it.v = null; it.u = null; } else { it.pm = null; it.duo = null; }
+    return it;
+  }
   function addItem(gid) {
     var gi = findG(gid); if (gi < 0) return;
-    var g = S.groups[gi]; if (g.items.length >= 20) return;
-    var it = { id: nid('i'), k: '', name: '新项目', w: 0, pm: null, duo: null, c: 0, on: true, lock: false };
+    var g = GS()[gi]; if (g.items.length >= 20) return;
+    var it = blankItem('新项目');
     addShare(g.items, it, 100);
     openIn[gid] = true;
     buildInputs(); update(); focusName('[data-name-i="' + it.id + '"]');
   }
   function delItem(iid) {
     var f = findI(iid); if (!f) return;
-    var g = S.groups[f.gi]; if (g.items.length < 2) return;
+    var g = GS()[f.gi]; if (g.items.length < 2) return;
     snapshot();
     var nm = g.items[f.ii].name;
     g.items.splice(f.ii, 1);
-    var rel = rebalance(g.items, 100);
-    removed(nm, rel);
+    removed(nm, rebalance(g.items, 100));
     buildInputs(); update();
   }
   function moveItem(iid, dir) {
     var f = findI(iid); if (!f) return;
-    var g = S.groups[f.gi], it = g.items[f.ii], ni = f.ii + dir;
+    var gs = GS(), g = gs[f.gi], it = g.items[f.ii], ni = f.ii + dir;
     if (ni >= 0 && ni < g.items.length) {
       g.items[f.ii] = g.items[ni]; g.items[ni] = it;
     } else {
-      var tg = S.groups[f.gi + dir];
+      var tg = gs[f.gi + dir];
       if (!tg || g.items.length < 2 || tg.items.length >= 20) return;
       g.items.splice(f.ii, 1);
       var rel = rebalance(g.items, 100);
@@ -799,19 +1008,22 @@ button.grow .nm { font-weight: 600; }
     if (b && !b.disabled) b.focus();
   }
   function addGroup() {
-    var m = S.groups.length; if (m >= 12) return;
-    var g = { id: nid('g'), k: '', name: '新分组', w: 0, lock: false, items: [{ id: nid('i'), k: '', name: '新项目', w: 100, pm: null, duo: null, c: 0, on: true, lock: false }] };
-    addShare(S.groups, g, 100); wsAdd(g.id, m);
+    var gs = GS(), m = gs.length; if (m >= 12) return;
+    var g = { id: nid('g'), k: '', name: '新分组', w: 0, lock: false, items: [blankItem('新项目')] };
+    g.items[0].w = 100;
+    if (isSec()) g.sign = 1;
+    addShare(gs, g, 100);
+    if (!isSec()) wsAdd(g.id, m);
     openIn[g.id] = true;
     buildInputs(); update(); focusName('[data-name-g="' + g.id + '"]');
   }
   function delGroup(gid) {
-    var gi = findG(gid); if (gi < 0 || S.groups.length < 2) return;
+    var gs = GS(), gi = findG(gid); if (gi < 0 || gs.length < 2) return;
     snapshot();
-    var nm = S.groups[gi].name;
-    S.groups.splice(gi, 1); wsDel(gid);
-    var rel = rebalance(S.groups, 100);
-    removed(nm, rel);
+    var nm = gs[gi].name;
+    gs.splice(gi, 1);
+    if (!isSec()) wsDel(gid);
+    removed(nm, rebalance(gs, 100));
     buildInputs(); update();
   }
   function toggleLock(arr, idx) {
@@ -825,10 +1037,12 @@ button.grow .nm { font-weight: 600; }
   function setRole(r) {
     if (r === S.role) return;
     stash(); S.role = r;
-    var w = S.ws[r];
-    S.groups.forEach(function (g) { g.w = w[g.id] != null ? w[g.id] : 0; g.r = g.w; });
-    rebalance(S.groups, 100);
-    update();
+    if (r !== 'second') {
+      var w = S.ws[r];
+      S.groups.forEach(function (g) { g.w = w[g.id] != null ? w[g.id] : 0; g.r = g.w; });
+      rebalance(S.groups, 100);
+    }
+    buildAll(); update();
   }
   $('undo-btn').addEventListener('click', function () {
     if (!undoSnap) return;
@@ -838,19 +1052,18 @@ button.grow .nm { font-weight: 600; }
 
   $('dims').addEventListener('input', function (e) {
     var t = e.target, id = t.id || '', m;
-    if (t.hasAttribute('data-name-g')) { var a = findG(t.getAttribute('data-name-g')); if (a >= 0) { S.groups[a].name = t.value; update(); } return; }
-    if (t.hasAttribute('data-name-i')) { var b = findI(t.getAttribute('data-name-i')); if (b) { S.groups[b.gi].items[b.ii].name = t.value; update(); } return; }
-    m = /^(gw|pm|duo|iw)-(.+)$/.exec(id);
+    if (t.hasAttribute('data-name-g')) { var a = findG(t.getAttribute('data-name-g')); if (a >= 0) { GS()[a].name = t.value; update(); } return; }
+    if (t.hasAttribute('data-name-i')) { var b = findI(t.getAttribute('data-name-i')); if (b) { GS()[b.gi].items[b.ii].name = t.value; update(); } return; }
+    m = /^(gw|pm|duo|iw|v|u)-(.+)$/.exec(id);
     if (!m) return;
     var v = parseFloat(t.value);
     if (m[1] === 'gw') {
-      var gi = findG(m[2]); if (gi >= 0) setShare(S.groups, gi, v, 100);
+      var gi = findG(m[2]); if (gi >= 0) setShare(GS(), gi, v, 100);
     } else {
       var f = findI(m[2]); if (!f) return;
-      var it = S.groups[f.gi].items[f.ii];
-      if (m[1] === 'pm') { it.pm = v; it.c = 0; }
-      else if (m[1] === 'duo') { it.duo = v; it.c = 0; }
-      else setShare(S.groups[f.gi].items, f.ii, v, 100);
+      var it = GS()[f.gi].items[f.ii];
+      if (m[1] === 'iw') setShare(GS()[f.gi].items, f.ii, v, 100);
+      else { it[m[1]] = v; it.c = 0; }
     }
     update();
   });
@@ -858,10 +1071,10 @@ button.grow .nm { font-weight: 600; }
   $('dims').addEventListener('click', function (e) {
     var t = e.target;
     if (t.matches && t.matches('input[type="range"][data-pend]')) {
-      var m = /^(pm|duo)-(.+)$/.exec(t.id), f = m && findI(m[2]);
+      var m = /^(pm|duo|v|u)-(.+)$/.exec(t.id), f = m && findI(m[2]);
       if (f) {
-        var it = S.groups[f.gi].items[f.ii];
-        if (it[m[1]] === null) { it[m[1]] = parseFloat(t.value); it.c = 0; update(); }
+        var it = GS()[f.gi].items[f.ii];
+        if (nz(it[m[1]])) { it[m[1]] = parseFloat(t.value); it.c = 0; update(); }
       }
       return;
     }
@@ -877,22 +1090,29 @@ button.grow .nm { font-weight: 600; }
     else if (b.hasAttribute('data-add-i')) addItem(b.getAttribute('data-add-i'));
     else if (b.hasAttribute('data-del-i')) delItem(b.getAttribute('data-del-i'));
     else if (b.hasAttribute('data-del-g')) delGroup(b.getAttribute('data-del-g'));
-    else if (b.hasAttribute('data-lock-g')) { var gi = findG(b.getAttribute('data-lock-g')); if (gi >= 0) { toggleLock(S.groups, gi); update(); } }
-    else if (b.hasAttribute('data-lock-i')) { var f2_ = findI(b.getAttribute('data-lock-i')); if (f2_) { toggleLock(S.groups[f2_.gi].items, f2_.ii); update(); } }
+    else if (b.hasAttribute('data-sign-g')) { var gi2 = findG(b.getAttribute('data-sign-g')); if (gi2 >= 0) { GS()[gi2].sign = -GS()[gi2].sign; update(); } }
+    else if (b.hasAttribute('data-lock-g')) { var gi = findG(b.getAttribute('data-lock-g')); if (gi >= 0) { toggleLock(GS(), gi); update(); } }
+    else if (b.hasAttribute('data-lock-i')) { var f2_ = findI(b.getAttribute('data-lock-i')); if (f2_) { toggleLock(GS()[f2_.gi].items, f2_.ii); update(); } }
     else if (b.hasAttribute('data-mv')) moveItem(b.getAttribute('data-mv'), parseInt(b.getAttribute('data-dir'), 10));
-    else if (b.hasAttribute('data-confirm')) { var f3 = findI(b.getAttribute('data-confirm')); if (f3) { S.groups[f3.gi].items[f3.ii].c = 0; update(); } }
+    else if (b.hasAttribute('data-confirm')) { var f3 = findI(b.getAttribute('data-confirm')); if (f3) { GS()[f3.gi].items[f3.ii].c = 0; update(); } }
     else if (b.id === 'add-g') addGroup();
   });
   $('dims').addEventListener('change', function (e) {
     var t = e.target;
     if (t.id && /^ck-/.test(t.id)) {
-      var f = findI(t.id.slice(3)); if (f) { S.groups[f.gi].items[f.ii].on = t.checked; update(); }
+      var f = findI(t.id.slice(3)); if (f) { GS()[f.gi].items[f.ii].on = t.checked; update(); }
     }
   });
 
   $('gate').addEventListener('input', function (e) {
     var t = e.target;
     if (t.hasAttribute('data-name-t')) { var i = taskById(t.getAttribute('data-name-t')); if (i >= 0) { S.tasks[i].name = t.value; update(); } }
+    else if (t.hasAttribute('data-m')) {
+      var pr = t.getAttribute('data-m').split('.'), v = parseFloat(t.value);
+      S.money[pr[0]][pr[1]] = isFinite(v) ? v : null; update();
+    } else if (t.hasAttribute('data-hold')) {
+      var h = parseFloat(t.value); if (num(h, 1, 120)) { S.hold = Math.round(h); var hl = $('hold-l'); if (hl) hl.textContent = S.hold; update(); }
+    }
   });
   $('gate').addEventListener('change', function (e) {
     var t = e.target, i;
@@ -902,7 +1122,7 @@ button.grow .nm { font-weight: 600; }
     } else if (t.hasAttribute('data-sel-t')) {
       i = taskById(t.getAttribute('data-sel-t'));
       if (i >= 0) { S.tasks[i][t.getAttribute('data-p')] = t.value; update(); }
-    }
+    } else if (t.id === 'tol') { S.tol = t.value; update(); }
   });
   $('gate').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
@@ -911,6 +1131,11 @@ button.grow .nm { font-weight: 600; }
       b.closest('.grp').querySelector('.grp-body').hidden = !openIn.gate;
       b.classList.toggle('open', openIn.gate);
       b.setAttribute('aria-expanded', openIn.gate ? 'true' : 'false');
+    } else if (b.hasAttribute('data-toggle-money')) {
+      openIn.money = !openIn.money;
+      b.closest('.grp').querySelector('.grp-body').hidden = !openIn.money;
+      b.classList.toggle('open', openIn.money);
+      b.setAttribute('aria-expanded', openIn.money ? 'true' : 'false');
     } else if (b.hasAttribute('data-add-t')) {
       if (S.tasks.length >= 20) return;
       var t = { id: nid('t'), name: '新任务', on: true, pm: '', duo: '' };
@@ -922,10 +1147,11 @@ button.grow .nm { font-weight: 600; }
   });
 
   $('roles').addEventListener('click', function (e) { var b = e.target.closest('button[data-role]'); if (b) setRole(b.getAttribute('data-role')); });
-  $('sc-nov').addEventListener('click', function (e) { var b = e.target.closest('button[data-nov]'); if (b) { S.nov = b.getAttribute('data-nov'); update(); } });
   $('sc-soft').addEventListener('click', function (e) { var b = e.target.closest('button[data-soft]'); if (b) { S.soft = b.getAttribute('data-soft'); update(); } });
   $('sx').addEventListener('input', function () { S.softX = parseFloat(this.value); update(); });
-  $('mit').addEventListener('input', function () { S.mit = parseFloat(this.value); update(); });
+  $('nv-pm').addEventListener('input', function () { S.novR.pm = parseFloat(this.value); update(); });
+  $('nv-duo').addEventListener('input', function () { S.novR.duo = parseFloat(this.value); update(); });
+  $('sc-reset').addEventListener('click', function () { S.novR = { pm: 100, duo: 100 }; S.soft = 'now'; update(); });
   $('reset').addEventListener('click', function () {
     S = defaults(); openIn = {}; openG = {};
     try { localStorage.removeItem(KEY); } catch (e) {}
@@ -940,15 +1166,16 @@ button.grow .nm { font-weight: 600; }
   }
   function lead(d) { return d > 0.005 ? 1 : (d < -0.005 ? -1 : 0); }
   function chip(label, d) {
-    var l = lead(d);
-    return '<span class="chp ' + (l > 0 ? 'pm' : (l < 0 ? 'duo' : '')) + '"><i>' + label + '</i>' + (l > 0 ? '18PM ' + f2(d) : (l < 0 ? 'Duo ' + f2(-d) : '持平')) + '</span>';
+    var l = lead(d), sec = isSec();
+    return '<span class="chp ' + (l > 0 ? (sec ? 'duo' : 'pm') : (l < 0 ? (sec ? 'pm' : 'duo') : '')) + '"><i>' + label + '</i>' +
+      (l === 0 ? '持平' : (sec ? (l > 0 ? '+' : '−') + f2(Math.abs(d)) : (l > 0 ? '18PM ' + f2(d) : 'Duo ' + f2(-d)))) + '</span>';
   }
   function flips(ds) { return ds.some(function (d) { return lead(d) > 0; }) && ds.some(function (d) { return lead(d) < 0; }); }
-  function gwFor(gi, v) {
+  function gwFor(arr, gi, v) {
     var o = {}, L = 0, Fs = 0, nf = 0;
-    S.groups.forEach(function (g, j) { if (j !== gi) { if (g.lock) L += g.w; else { Fs += g.w; nf++; } } });
+    arr.forEach(function (g, j) { if (j !== gi) { if (g.lock) L += g.w; else { Fs += g.w; nf++; } } });
     var R = (100 - L) - v;
-    S.groups.forEach(function (g, j) {
+    arr.forEach(function (g, j) {
       if (j === gi) o[g.id] = v;
       else if (g.lock) o[g.id] = g.w;
       else o[g.id] = Fs > 1e-9 ? g.w * R / Fs : R / nf;
@@ -956,41 +1183,60 @@ button.grow .nm { font-weight: 600; }
     return o;
   }
   function sens(R) {
-    function sr(l, v) { return '<div class="sr"><span class="sl">' + l + '</span><div class="sv">' + v + '</div></div>'; }
-    if (!R.ok) return '<div class="sr"><span class="sl">—</span><div class="sv"></div></div>';
-    var h = '', d0 = dOf(R), i;
+    var h = '', inc = !R.complete, sec = R.mode === 'sec', i;
+    function sr(l, v, plain) { return '<div class="sr"><span class="sl">' + l + '</span><div class="sv">' + v + (inc && !plain ? '<span class="flip">暂算</span>' : '') + '</div></div>'; }
+    if (!R.ok) return sr('未评范围', '<span class="chp"><i>先给至少一项完整评分</i></span>', true);
+    var d0 = D(R);
 
-    /* 1. software gap */
-    var dX = function (x) { return dOf(calc(scen({ x: x }))); };
-    var hasSoft = R.F.some(function (x) { return x.it.k && ITEMS[x.it.k].soft; }), q1;
-    if (!hasSoft) q1 = '<span class="chp"><i>软件项未计入</i></span>';
-    else {
-      var f0 = dX(0);
-      if (lead(f0) === 0) q1 = '<span class="chp"><i>现状</i>持平</span>';
-      else if (f0 > 0) {
-        var f1 = dX(1);
-        if (f1 > 0.005) q1 = '<span class="chp pm"><i>差距全补平后仍</i>18PM ' + f2(f1) + '</span>';
-        else { var xr = bisect(dX, 0, 1); q1 = '<span class="chp duo"><i>补上软件差距</i>' + Math.round(xr * 100) + '%</span>'; }
-      } else {
-        var fm = dX(-1);
-        if (fm < -0.005) q1 = '<span class="chp duo"><i>软件降到 1 分仍</i>Duo ' + f2(-fm) + '</span>';
-        else { var xn = bisect(dX, -1, 0); q1 = '<span class="chp pm"><i>Duo 软件项再降</i>' + Math.round(-xn * 100) + '%</span>'; }
-      }
+    if (inc) {
+      var iv = DI(R), det = iv[0] > 0.005 ? 1 : (iv[1] < -0.005 ? -1 : 0);
+      var rng = '<span class="chp"><i>' + (sec ? '净增量区间' : '分差区间') + '</i>' + sgn(iv[0]) + ' … ' + sgn(iv[1]) + '</span>' +
+        '<span class="chp"><i>已评权重</i>' + pct(R.C) + '%</span>' +
+        (det !== 0 ? '<span class="chp ' + ((det > 0) === sec ? 'duo' : 'pm') + '"><i>未评项无论如何评分</i>' + (sec ? (det > 0 ? '保留 Duo 有净增量' : '负担更大') : (det > 0 ? '18PM 领先' : 'Duo 领先')) + '</span>' : '<span class="chp"><i>未评项可改变结论</i></span>');
+      h += sr('未评范围', rng, true);
     }
-    h += sr('Duo 软件追平', q1);
+
+    if (!sec) {
+      /* 1. software gap */
+      var dX = function (x) { return D(calc(scen({ x: x }))); };
+      var hasSoft = R.F.some(function (x) { return x.it.k && ITEMS[x.it.k].soft; }), q1;
+      if (!hasSoft) q1 = '<span class="chp"><i>软件项尚未评分</i></span>';
+      else {
+        var f0 = dX(0);
+        if (lead(f0) === 0) q1 = '<span class="chp"><i>现状</i>持平</span>';
+        else if (f0 > 0) {
+          var f1 = dX(1);
+          if (f1 > 0.005) q1 = '<span class="chp pm"><i>差距全补平后仍</i>18PM ' + f2(f1) + '</span>';
+          else q1 = '<span class="chp duo"><i>补上软件差距</i>' + Math.round(bisect(dX, 0, 1) * 100) + '%</span>';
+        } else {
+          var fm = dX(-1);
+          if (fm < -0.005) q1 = '<span class="chp duo"><i>软件降到 1 分仍</i>Duo ' + f2(-fm) + '</span>';
+          else q1 = '<span class="chp pm"><i>Duo 软件项再降</i>' + Math.round(-bisect(dX, -1, 0) * 100) + '%</span>';
+        }
+      }
+      h += sr('Duo 软件追平', q1);
+    } else {
+      var hasG = R.F.some(function (x) { return x.sign > 0; }), qk;
+      var dK = function (k) { return D(calcSec({ gk: k })); };
+      if (!hasG) qk = '<span class="chp"><i>收益项尚未评分</i></span>';
+      else if (lead(d0) === 0) qk = '<span class="chp"><i>现状</i>持平</span>';
+      else if (d0 > 0) qk = '<span class="chp duo"><i>收益仍保留</i>' + Math.round(bisect(dK, 0, 1) * 100) + '% 即持平</span>';
+      else if (dK(10) < -0.005) qk = '<span class="chp pm"><i>收益放大 10 倍仍</i>负担更大</span>';
+      else qk = '<span class="chp pm"><i>收益需放大到</i>×' + bisect(dK, 1, 10).toFixed(1) + '</span>';
+      h += sr('收益折减', qk);
+    }
 
     /* 2. category weight that flips the ranking */
-    var chips = [];
+    var arr = GS(), chips = [];
     if (lead(d0) !== 0) {
-      S.groups.forEach(function (g, gi) {
+      arr.forEach(function (g, gi) {
         var G = R.gs.filter(function (x) { return x.g === g; })[0];
-        if (!G || !canAdjust(S.groups, gi)) return;
-        var cap = 100 - lockedSum(S.groups, gi);
-        var fn = function (v) { return dOf(calc(scen(), gwFor(gi, v))); };
+        if (!G || !canAdjust(arr, gi)) return;
+        var cap = 100 - lockedSum(arr, gi);
+        var fn = function (v) { return D(run(null, gwFor(arr, gi, v))); };
         var ends = [0, cap], k, root = null;
         for (k = 0; k < 2; k++) {
-          var fe = fn(ends[k]);
-          if (lead(fe) !== lead(d0)) { root = bisect(fn, Math.min(g.w, ends[k]), Math.max(g.w, ends[k])); break; }
+          if (lead(fn(ends[k])) !== lead(d0)) { root = bisect(fn, Math.min(g.w, ends[k]), Math.max(g.w, ends[k])); break; }
         }
         if (root !== null && Math.abs(root - g.w) > 0.05) chips.push({ n: g.name || '未命名', from: g.w, to: root });
       });
@@ -1004,13 +1250,14 @@ button.grow .nm { font-weight: 600; }
     }).join('');
     h += sr('翻转排序的权重', q2);
 
-    /* 3. novelty */
-    var nd = NOVS.map(function (n) { return dOf(calc(scen({ f: n.f }))); });
-    h += sr('新鲜感', NOVS.map(function (n, k) { return chip(n.label, nd[k]); }).join('') + (flips(nd) ? '<span class="flip">排序改变</span>' : ''));
-
-    /* 4. backup phone */
-    var bd = [dOf(calc(scen({ backup: false }))), dOf(calc(scen({ backup: true })))];
-    h += sr('备用机', chip('无', bd[0]) + chip('有', bd[1]) + (flips(bd) ? '<span class="flip">排序改变</span>' : ''));
+    if (!sec) {
+      /* 3. Duo novelty kept */
+      var NV = [100, 50, 20], nd = NV.map(function (n) { return D(calc(scen({ rd: n / 100 }))); });
+      h += sr('Duo 新鲜感', NV.map(function (n, k) { return chip('保留 ' + n + '%', nd[k]); }).join('') + (flips(nd) ? '<span class="flip">排序改变</span>' : ''));
+      /* 4. backup phone: it eases the outage constraint only, never the scores */
+      var tl = { '': '待定', ok: '可以承受', no: '无法承受' }[S.tol];
+      h += sr('备用机', '<span class="chp"><i>评分</i>不变</span><span class="chp"><i>无备用机时停机</i>' + tl + '</span><span class="chp"><i>有备用机</i>停机已缓解</span>', true);
+    }
     return h;
   }
 
@@ -1060,21 +1307,22 @@ button.grow .nm { font-weight: 600; }
   }
   function cls(c) { return c > 0.0049 ? 'pm' : (c < -0.0049 ? 'duo' : ''); }
   function bars(R) {
-    var rows = [], maxAbs = 0.1;
+    var rows = [], maxAbs = 0.1, sec = R.mode === 'sec';
     R.gs.forEach(function (G) {
-      var items = G.its.map(function (x) { maxAbs = Math.max(maxAbs, Math.abs(x.c)); return { s: x.s, c: x.c }; });
+      if (!G.F.length) return;
+      var items = G.F.map(function (x) { maxAbs = Math.max(maxAbs, Math.abs(x.c)); return { s: x.s, c: x.c, d: sec ? x.d : x.c }; });
       items.sort(function (a, b) { return b.c - a.c; });
       maxAbs = Math.max(maxAbs, Math.abs(G.c));
-      rows.push({ g: G.g, c: G.c, items: items });
+      rows.push({ g: G.g, c: G.c, d: sec ? G.d : G.c, items: items });
     });
     rows.sort(function (a, b) { return b.c - a.c; });
     var h = '';
     rows.forEach(function (r) {
       var open = !!openG[r.g.id];
       h += '<button type="button" class="brow grow' + (open ? ' open' : '') + '" data-toggle="' + r.g.id + '" aria-expanded="' + open + '">' +
-        '<span class="nm"><i class="chev"></i>' + esc(r.g.name || '未命名') + '</span><div class="track">' + barHtml(r.c, maxAbs) + '</div><span class="bv ' + cls(r.c) + '">' + sgn(r.c) + '</span></button>';
+        '<span class="nm"><i class="chev"></i>' + esc(r.g.name || '未命名') + '</span><div class="track">' + barHtml(r.c, maxAbs) + '</div><span class="bv ' + cls(r.c) + '">' + sgn(r.d) + '</span></button>';
       if (open) r.items.forEach(function (it) {
-        h += '<div class="brow sub"><span class="nm">' + esc(it.s) + '</span><div class="track">' + barHtml(it.c, maxAbs) + '</div><span class="bv ' + cls(it.c) + '">' + sgn(it.c) + '</span></div>';
+        h += '<div class="brow sub"><span class="nm">' + esc(it.s) + '</span><div class="track">' + barHtml(it.c, maxAbs) + '</div><span class="bv ' + cls(it.c) + '">' + sgn(it.d) + '</span></div>';
       });
     });
     $('bars').innerHTML = h;
@@ -1082,30 +1330,47 @@ button.grow .nm { font-weight: 600; }
   $('bars').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-toggle]'); if (!b) return;
     var id = b.getAttribute('data-toggle'); openG[id] = !openG[id];
-    bars(calc(scen()));
+    bars(run());
   });
 
-  /* ---------- export ---------- */
-  var CP = { bg: '#FFFFFF', fg: '#141A23', mu: '#566172', ln: '#D3D9E1', tr: '#E6EAF0', pm: '#2563C9', duo: '#D9660B', wn: '#B42318',
-             pmf: 'rgba(37,99,201,0.18)', duof: 'rgba(217,102,11,0.18)' };
-  var FB = "'IBM Plex Sans','PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif";
-  var FN = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
-
+  /* ---------- verdict text (shared by page and export) ---------- */
+  function leadText(R) {
+    var d = D(R);
+    if (R.mode === 'sec') {
+      if (Math.abs(d) < 0.1) return { t: '增量收益与额外负担基本持平', b: false };
+      return { t: d > 0 ? '保留 Duo 的增量收益大于额外负担 ' + f2(d) : '额外负担大于增量收益 ' + f2(-d), b: true };
+    }
+    if (Math.abs(d) < 0.1) return { t: '两台几乎持平，差 ' + f2(Math.abs(d)) + ' 分', b: false };
+    return { t: (d > 0 ? '18 Pro Max' : 'Duo') + ' 领先 ' + f2(Math.abs(d)) + ' 分', b: true };
+  }
+  function gateSuffix(R) {
+    if (isSec() || S.role !== 'solo') return '';
+    var G = gateInfo(), l = lead(D(R)), fp = G.pm.bad.length > 0, fd = G.duo.bad.length > 0;
+    if (fp && fd) return '，但两台均未满足唯一主力机要求';
+    if (l > 0 && fp) return '，但 18 Pro Max 未满足唯一主力机要求';
+    if (l < 0 && fd) return '，但 Duo 未满足唯一主力机要求';
+    return '';
+  }
+  function verdictParts(R) {
+    if (!R.ok) return { pre: '尚未评分：给一项的两台（或收益与负担）都打分后显示暂算结果', b: '', post: '' };
+    var L = leadText(R), pre = '', post = '', iv = DI(R);
+    if (!R.complete) {
+      pre = '暂算（已评 ' + pct(R.C) + '% 权重，不是最终推荐）：';
+      var det = iv[0] > 0.005 ? 1 : (iv[1] < -0.005 ? -1 : 0);
+      if (det !== 0) post = R.mode === 'sec' ? '；未评项无论如何评分，' + (det > 0 ? '保留 Duo 都有净增量' : '额外负担都更大')
+                                             : '；未评项无论如何评分，' + (det > 0 ? '18 Pro Max' : 'Duo') + ' 都领先';
+    }
+    post += gateSuffix(R);
+    return L.b ? { pre: pre, b: L.t, post: post } : { pre: pre + L.t, b: '', post: post };
+  }
+  function verdictFull(R) { var v = verdictParts(R); return v.pre + v.b + v.post; }
   function scenTags() {
     var t = [];
-    if (S.nov !== 'keep') t.push('新鲜感' + NOVS.filter(function (n) { return n.id === S.nov; })[0].label);
+    if (isSec()) return t;
+    if (S.novR.pm < 100) t.push('18PM 新鲜感保留 ' + S.novR.pm + '%');
+    if (S.novR.duo < 100) t.push('Duo 新鲜感保留 ' + S.novR.duo + '%');
     if (S.soft === 'part') t.push('软件部分改善');
     else if (S.soft === 'custom') t.push('软件改善 ' + S.softX + '%');
-    if (S.role === 'backup') t.push('备用机缓解 ' + S.mit + '%');
-    return t;
-  }
-  function verdictText(d) {
-    if (Math.abs(d) < 0.1) return '两台几乎持平，差 ' + f2(Math.abs(d)) + ' 分';
-    return (d > 0 ? '18 Pro Max' : 'Duo') + ' 领先 ' + f2(Math.abs(d)) + ' 分';
-  }
-  function verdictFull(R) {
-    var d = dOf(R), t = verdictText(d), G = gateInfo(), l = lead(d);
-    if (S.role === 'solo' && l !== 0 && G[l > 0 ? 'pm' : 'duo'].bad.length) t += '，但未满足唯一主力机要求';
     return t;
   }
   function gateLines() {
@@ -1113,23 +1378,43 @@ button.grow .nm { font-weight: 600; }
     var G = gateInfo(), out = [];
     if (G.pm.bad.length) out.push('18 Pro Max 未满足唯一主力机要求：' + G.pm.bad.join('、'));
     if (G.duo.bad.length) out.push('Duo 未满足唯一主力机要求：' + G.duo.bad.join('、'));
+    var tn = tolNote(); if (tn.t) out.push(tn.t);
     return out;
   }
-  function lists(F) {
-    var rows = F.map(function (x) { return { s: x.s, c: x.c }; });
+  function lists(R) {
+    var rows = R.F.map(function (x) { return { s: x.s, c: x.c }; });
     return {
       pm: rows.filter(function (r) { return r.c > 0.0049; }).sort(function (a, b) { return b.c - a.c; }).map(function (r) { return r.s; }),
       duo: rows.filter(function (r) { return r.c < -0.0049; }).sort(function (a, b) { return a.c - b.c; }).map(function (r) { return r.s; })
     };
   }
   function exportText() {
-    var R = calc(scen()), g = lists(R.F), tg = scenTags();
-    var L = ['18 Pro Max ' + f2(R.pm) + ' : Duo ' + f2(R.duo), verdictFull(R) + '（' + roleLabel() + (tg.length ? '；' + tg.join('、') : '') + '）'];
-    gateLines().forEach(function (x) { L.push(x); });
-    if (g.pm.length) L.push('18 Pro Max 占优：' + g.pm.join('、'));
-    if (g.duo.length) L.push('Duo 占优：' + g.duo.join('、'));
+    var R = run(), tg = scenTags(), L = [];
+    if (R.mode === 'sec') {
+      L.push('保留 Duo 的增量评估：' + (R.ok ? sgn(R.net) : '—') + (R.complete ? '' : '（暂算）'));
+      L.push(verdictFull(R) + '（' + roleLabel() + '）');
+      var g2 = { gain: [], burden: [] };
+      R.F.forEach(function (x) { (x.sign > 0 ? g2.gain : g2.burden).push(x); });
+      if (g2.gain.length) L.push('增量收益：' + g2.gain.sort(function (a, b) { return b.signed - a.signed; }).map(function (x) { return x.s; }).join('、'));
+      if (g2.burden.length) L.push('额外负担：' + g2.burden.sort(function (a, b) { return a.signed - b.signed; }).map(function (x) { return x.s; }).join('、'));
+    } else {
+      L.push('18 Pro Max ' + (R.ok ? f2(R.pm) : '—') + ' : Duo ' + (R.ok ? f2(R.duo) : '—') + (R.complete ? '' : '（暂算）'));
+      L.push(verdictFull(R) + '（' + roleLabel() + (tg.length ? '；' + tg.join('、') : '') + '）');
+      if (!R.complete && R.ok) L.push('分差区间 ' + sgn(R.dI[0]) + ' … ' + sgn(R.dI[1]));
+      gateLines().forEach(function (x) { L.push(x); });
+      var g = lists(R);
+      if (g.pm.length) L.push('18 Pro Max 占优：' + g.pm.join('、'));
+      if (g.duo.length) L.push('Duo 占优：' + g.duo.join('、'));
+    }
+    var ml = moneyLine(); if (ml) L.push(ml);
     return L.join('\n');
   }
+
+  /* ---------- export card ---------- */
+  var CP = { bg: '#FFFFFF', fg: '#141A23', mu: '#566172', ln: '#D3D9E1', tr: '#E6EAF0', pm: '#2563C9', duo: '#D9660B', wn: '#B42318',
+             pmf: 'rgba(37,99,201,0.18)', duof: 'rgba(217,102,11,0.18)' };
+  var FB = "'IBM Plex Sans','PingFang SC','Hiragino Sans GB','Noto Sans SC','Microsoft YaHei',sans-serif";
+  var FN = "'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
   function rr(ctx, x, y, w, h, r) {
     ctx.beginPath(); ctx.moveTo(x + r, y);
     ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
@@ -1146,39 +1431,49 @@ button.grow .nm { font-weight: 600; }
     return y;
   }
   function drawCard(cv, H) {
-    var sc = 2, ctx = cv.getContext('2d'), i, R = calc(scen()), F = R.F, N = F.length;
+    var sc = 2, ctx = cv.getContext('2d'), i, R = run(), sec = R.mode === 'sec', F = R.F, N = F.length;
     cv.width = 900 * sc; cv.height = H * sc; ctx.scale(sc, sc);
     ctx.fillStyle = CP.bg; ctx.fillRect(0, 0, 900, H);
     ctx.textBaseline = 'alphabetic';
 
     ctx.textAlign = 'left'; ctx.fillStyle = CP.fg; ctx.font = '600 28px ' + FB;
-    ctx.fillText('18 Pro Max vs Duo', 48, 76);
+    ctx.fillText(sec ? '保留 Duo 的增量评估' : '18 Pro Max vs Duo', 48, 76);
     ctx.textAlign = 'right'; ctx.fillStyle = CP.mu; ctx.font = '400 20px ' + FB;
     ctx.fillText(roleLabel(), 852, 76);
 
-    var tp = R.pm, td = R.duo, d = tp - td;
-    [{ x: 48, name: '18 Pro Max', v: tp, c: CP.pm, lead: d > 0.005 }, { x: 462, name: 'Duo', v: td, c: CP.duo, lead: d < -0.005 }].forEach(function (b) {
+    var d = D(R), inc = !R.complete;
+    var boxes = sec
+      ? [{ x: 48, name: 'A · 仅现有主力机', txt: '基线', c: CP.pm, lead: R.ok && !inc && d < -0.005, v: 0, rg: '' },
+         { x: 462, name: 'B · 主力机 + Duo', txt: R.ok ? sgn(R.net) : '—', c: CP.duo, lead: R.ok && !inc && d > 0.005, v: null, rg: inc && R.ok ? '区间 ' + sgn(R.I[0]) + ' … ' + sgn(R.I[1]) : '' }]
+      : [{ x: 48, name: '18 Pro Max' + (inc ? ' · 暂算' : ''), txt: R.ok ? f2(R.pm) : '—', c: CP.pm, lead: R.ok && !inc && d > 0.005, v: R.pm, rg: inc && R.ok ? '区间 ' + f2(R.pmI[0]) + '–' + f2(R.pmI[1]) : '' },
+         { x: 462, name: 'Duo' + (inc ? ' · 暂算' : ''), txt: R.ok ? f2(R.duo) : '—', c: CP.duo, lead: R.ok && !inc && d < -0.005, v: R.duo, rg: inc && R.ok ? '区间 ' + f2(R.duoI[0]) + '–' + f2(R.duoI[1]) : '' }];
+    boxes.forEach(function (b) {
       rr(ctx, b.x, 108, 390, 132, 8);
       ctx.lineWidth = b.lead ? 3 : 1; ctx.strokeStyle = b.lead ? b.c : CP.ln; ctx.stroke();
       ctx.textAlign = 'left'; ctx.fillStyle = CP.mu; ctx.font = '400 22px ' + FB; ctx.fillText(b.name, b.x + 20, 144);
-      ctx.fillStyle = b.c; ctx.font = '500 56px ' + FN; var s = f2(b.v); ctx.fillText(s, b.x + 20, 202);
-      var wd = ctx.measureText(s).width;
-      ctx.fillStyle = CP.mu; ctx.font = '400 22px ' + FN; ctx.fillText('/5', b.x + 26 + wd, 202);
-      ctx.fillStyle = CP.tr; rr(ctx, b.x + 20, 218, 350, 8, 4); ctx.fill();
-      ctx.fillStyle = b.c; rr(ctx, b.x + 20, 218, Math.max(8, 350 * b.v / 5), 8, 4); ctx.fill();
+      ctx.fillStyle = b.c; ctx.font = '500 56px ' + FN; ctx.fillText(b.txt, b.x + 20, 202);
+      if (!sec && b.v !== null) {
+        var wd = ctx.measureText(b.txt).width;
+        ctx.fillStyle = CP.mu; ctx.font = '400 22px ' + FN; ctx.fillText('/5', b.x + 26 + wd, 202);
+        ctx.fillStyle = CP.tr; rr(ctx, b.x + 20, 218, 350, 8, 4); ctx.fill();
+        ctx.fillStyle = b.c; rr(ctx, b.x + 20, 218, Math.max(8, 350 * b.v / 5), 8, 4); ctx.fill();
+      }
+      if (b.rg) { ctx.textAlign = 'right'; ctx.fillStyle = CP.mu; ctx.font = '400 18px ' + FN; ctx.fillText(b.rg, b.x + 370, 144); }
     });
 
-    var y = 292;
-    ctx.textAlign = 'center'; ctx.font = '600 26px ' + FB;
-    ctx.fillStyle = Math.abs(d) < 0.1 ? CP.fg : (d > 0 ? CP.pm : CP.duo);
-    y = wrap(ctx, verdictFull(R), 450, y, 800, 34);
+    var y = 292, vp = verdictParts(R);
+    ctx.textAlign = 'center'; ctx.font = '600 24px ' + FB;
+    ctx.fillStyle = Math.abs(d) < 0.1 || !R.ok ? CP.fg : (sec ? (d > 0 ? CP.duo : CP.pm) : (d > 0 ? CP.pm : CP.duo));
+    y = wrap(ctx, vp.pre + vp.b + vp.post, 450, y, 800, 32);
     ctx.font = '400 20px ' + FB; ctx.fillStyle = CP.wn;
     gateLines().forEach(function (ln) { y = wrap(ctx, ln, 450, y + 6, 800, 28); });
+    ctx.fillStyle = CP.mu;
+    var ml = moneyLine(); if (ml) y = wrap(ctx, ml, 450, y + 6, 800, 28);
     var tg = scenTags();
-    if (tg.length) { ctx.fillStyle = CP.mu; y = wrap(ctx, tg.join(' · '), 450, y + 6, 800, 28); }
+    if (tg.length) y = wrap(ctx, tg.join(' · '), 450, y + 6, 800, 28);
 
     var cx = 450, R0 = 170, cy = y + 250, r;
-    if (N >= 3) {
+    if (!sec && N >= 3) {
       var pt = function (idx, v) { var a = -Math.PI / 2 + idx * 2 * Math.PI / N, q = R0 * v / 5; return [cx + q * Math.cos(a), cy + q * Math.sin(a)]; };
       var path = function (vals) { ctx.beginPath(); vals.forEach(function (v, k) { var q = pt(k, v); if (k) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.closePath(); };
       for (r = 1; r <= 5; r++) {
@@ -1196,15 +1491,22 @@ button.grow .nm { font-weight: 600; }
         ctx.textAlign = c > 0.3 ? 'left' : (c < -0.3 ? 'right' : 'center');
         ctx.fillText(F[i].s, cx + (R0 + 20) * c, cy + (R0 + 20) * s2 + (s2 > 0.5 ? 16 : (s2 < -0.5 ? -4 : 7)));
       }
+      y = cy + 268;
+      ctx.font = '400 20px ' + FB; ctx.textAlign = 'left';
+      ctx.fillStyle = CP.pm; ctx.fillRect(306, y - 14, 14, 14); ctx.fillStyle = CP.mu; ctx.fillText('18 Pro Max', 326, y);
+      ctx.fillStyle = CP.duo; ctx.fillRect(500, y - 14, 14, 14); ctx.fillStyle = CP.mu; ctx.fillText('Duo', 520, y);
+      y += 56;
+    } else y = y + 50;
+    var blocks;
+    if (sec) {
+      var gn = R.F.filter(function (x) { return x.sign > 0; }).sort(function (a, b) { return b.signed - a.signed; }).map(function (x) { return x.s; });
+      var bn = R.F.filter(function (x) { return x.sign < 0; }).sort(function (a, b) { return a.signed - b.signed; }).map(function (x) { return x.s; });
+      blocks = [['增量收益', gn, CP.duo], ['额外负担', bn, CP.pm]];
+    } else {
+      var g = lists(R);
+      blocks = [['18 Pro Max 占优', g.pm, CP.pm], ['Duo 占优', g.duo, CP.duo]];
     }
-
-    y = cy + 268;
-    ctx.font = '400 20px ' + FB; ctx.textAlign = 'left';
-    ctx.fillStyle = CP.pm; ctx.fillRect(306, y - 14, 14, 14); ctx.fillStyle = CP.mu; ctx.fillText('18 Pro Max', 326, y);
-    ctx.fillStyle = CP.duo; ctx.fillRect(500, y - 14, 14, 14); ctx.fillStyle = CP.mu; ctx.fillText('Duo', 520, y);
-    y += 56;
-    var g = lists(F);
-    [['18 Pro Max 占优', g.pm, CP.pm], ['Duo 占优', g.duo, CP.duo]].forEach(function (blk) {
+    blocks.forEach(function (blk) {
       if (!blk[1].length) return;
       ctx.textAlign = 'left'; ctx.font = '600 20px ' + FB; ctx.fillStyle = blk[2]; ctx.fillText(blk[0], 48, y);
       ctx.font = '400 20px ' + FB; ctx.fillStyle = CP.fg;
@@ -1217,7 +1519,7 @@ button.grow .nm { font-weight: 600; }
   function msg(t) { $('msg').textContent = t || ''; }
   function openExport() {
     function go() {
-      var t = document.createElement('canvas'), endY = drawCard(t, 2400);
+      var t = document.createElement('canvas'), endY = drawCard(t, 2600);
       var cv = document.createElement('canvas'); drawCard(cv, Math.ceil(endY) + 20);
       cardCv = cv;
       var url = cv.toDataURL('image/png');
@@ -1245,31 +1547,42 @@ button.grow .nm { font-weight: 600; }
 
   /* ---------- update ---------- */
   function update() {
-    var sc = scen(), R = calc(sc), F = R.F, effById = {};
-    F.forEach(function (x) { effById[x.it.id] = x.eff; });
+    var sec = isSec(), gs = GS(), R = run();
+    document.body.classList.toggle('sec', sec);
 
-    var gws = lrm(S.groups.map(function (g) { return g.w; }), 100), nPend = 0, nConf = 0;
-    S.groups.forEach(function (g, gi) {
-      var gs = $('gw-' + g.id);
-      gs.max = Math.floor(capOf(S.groups, gi, 100) + 1e-9);
-      gs.value = gws[gi]; gs.disabled = !canAdjust(S.groups, gi);
+    /* inputs */
+    var gws = lrm(gs.map(function (g) { return g.w; }), 100), nPend = 0, nConf = 0;
+    gs.forEach(function (g, gi) {
+      var gsl = $('gw-' + g.id);
+      gsl.max = Math.floor(capOf(gs, gi, 100) + 1e-9);
+      gsl.value = gws[gi]; gsl.disabled = !canAdjust(gs, gi);
       $('ogw-' + g.id).textContent = gws[gi] + '%';
       var lb = document.querySelector('[data-lock-g="' + g.id + '"]');
       lb.setAttribute('aria-pressed', g.lock ? 'true' : 'false');
       lb.title = g.lock ? '解除锁定' : '锁定权重';
-      var gp = g.items.filter(pending).length;
+      if (sec) document.querySelector('[data-sign-g="' + g.id + '"]').textContent = g.sign > 0 ? '收益' : '负担';
+      var gp = g.items.filter(function (it) { return isPend(it, g); }).length;
       $('gc-' + g.id).textContent = g.items.length + ' 项' + (gp ? ' · 待评分 ' + gp : '');
       var iws = lrm(g.items.map(function (x) { return x.w; }), 100);
       g.items.forEach(function (it, ii) {
-        var d = $('d-' + it.id);
-        d.classList.toggle('off', it.on === false);
+        $('d-' + it.id).classList.toggle('off', it.on === false);
         $('ck-' + it.id).checked = it.on !== false;
-        ['pm', 'duo'].forEach(function (p) {
-          var inp = $(p + '-' + it.id), nul = it[p] === null;
-          inp.value = nul ? 3 : it[p];
-          $('o-' + p + '-' + it.id).textContent = nul ? '—' : it[p].toFixed(1);
-          (p === 'pm' ? $('lp-' + it.id) : $('ld-' + it.id)).classList.toggle('pend', nul);
-        });
+        if (!sec) {
+          ['pm', 'duo'].forEach(function (p) {
+            var nul = it[p] === null;
+            $(p + '-' + it.id).value = nul ? 3 : it[p];
+            $('o-' + p + '-' + it.id).textContent = nul ? '—' : it[p].toFixed(1);
+            (p === 'pm' ? $('lp-' + it.id) : $('ld-' + it.id)).classList.toggle('pend', nul);
+          });
+        } else {
+          var nv = nz(it.v), nu = nz(it.u);
+          $('v-' + it.id).value = nv ? 2.5 : it.v; $('o-v-' + it.id).textContent = nv ? '—' : it.v.toFixed(1);
+          $('sv-' + it.id).textContent = g.sign > 0 ? '增量价值' : '负担';
+          $('lv-' + it.id).classList.toggle('pend', nv);
+          var lu = $('lu-' + it.id); lu.hidden = g.sign < 0;
+          $('u-' + it.id).value = nu ? 50 : it.u; $('o-u-' + it.id).textContent = nu ? '—' : it.u + '%';
+          lu.classList.toggle('pend', nu);
+        }
         var iw = $('iw-' + it.id);
         iw.max = Math.floor(capOf(g.items, ii, 100) + 1e-9);
         iw.value = iws[ii]; iw.disabled = !canAdjust(g.items, ii);
@@ -1277,30 +1590,35 @@ button.grow .nm { font-weight: 600; }
         var ilb = document.querySelector('[data-lock-i="' + it.id + '"]');
         ilb.setAttribute('aria-pressed', it.lock ? 'true' : 'false');
         ilb.title = it.lock ? '解除锁定' : '锁定权重';
-        var pd = pending(it), cf = it.on !== false && !!it.c;
+        var pd = isPend(it, g), cf = it.on !== false && !!it.c;
         $('bp-' + it.id).textContent = pd ? '待评分' : '';
         $('bc-' + it.id).hidden = !cf;
-        $('share-' + it.id).textContent = effById[it.id] != null ? '总 ' + Math.round(effById[it.id] * 100) + '%' : '';
+        $('share-' + it.id).textContent = R.eff[it.id] != null ? '总 ' + Math.round(R.eff[it.id] * 100) + '%' : '';
         if (pd) nPend++;
         if (cf) nConf++;
       });
     });
-    $('pend').textContent = (nPend ? '待评分 ' + nPend : '') + (nPend && nConf ? ' · ' : '') + (nConf ? '待确认 ' + nConf : '');
+    var ptxt = [];
+    if (R.gs.length && !R.complete) ptxt.push('已评 ' + pct(R.C) + '% 权重');
+    if (nPend) ptxt.push('待评分 ' + nPend);
+    if (nConf) ptxt.push('待确认 ' + nConf);
+    $('pend').textContent = ptxt.join(' · ');
 
     /* scenario controls */
     Array.prototype.forEach.call($('roles').children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-role') === S.role ? 'true' : 'false'); });
-    Array.prototype.forEach.call($('sc-nov').children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-nov') === S.nov ? 'true' : 'false'); });
     Array.prototype.forEach.call($('sc-soft').children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-soft') === S.soft ? 'true' : 'false'); });
-    $('sx-wrap').hidden = S.soft !== 'custom';
+    $('nov-wrap').hidden = sec; $('soft-wrap').hidden = sec;
+    $('sx-wrap').hidden = sec || S.soft !== 'custom';
     $('sx').value = S.softX; $('sx-o').textContent = S.softX + '%';
-    $('mit-wrap').hidden = S.role !== 'backup';
-    $('mit').value = S.mit; $('mit-o').textContent = S.mit + '%';
+    $('nv-pm').value = S.novR.pm; $('nv-pm-o').textContent = S.novR.pm + '%';
+    $('nv-duo').value = S.novR.duo; $('nv-duo-o').textContent = S.novR.duo + '%';
+    $('sc-reset').hidden = sec || (S.novR.pm === 100 && S.novR.duo === 100 && S.soft === 'now');
 
-    /* gate */
+    /* gate + money */
     var G = gateInfo(), gsum = $('gsum');
     if (gsum) {
       var gtxt = '';
-      if (G.n && S.role !== 'second') {
+      if (G.n) {
         ['pm', 'duo'].forEach(function (p) {
           var nm = p === 'pm' ? '18PM' : 'Duo', q = G[p];
           gtxt += '<span class="' + (q.bad.length ? 'bad' : p) + '">' + nm + ' ' + (q.bad.length ? q.bad.length + ' 项未达标' : (q.pend ? '待标记' : '全部达标')) + '</span>';
@@ -1308,29 +1626,54 @@ button.grow .nm { font-weight: 600; }
       }
       gsum.innerHTML = gtxt;
     }
+    var M = moneyCalc();
+    if ($('mn-duo')) {
+      $('mn-duo').textContent = M.any ? money(sec ? M.B : M.duo) : '';
+      if ($('mn-pm')) $('mn-pm').textContent = M.any ? money(sec ? M.A : M.pm) : '';
+      $('msum').textContent = M.any ? '差 ' + money(M.diff) : '';
+    }
 
     /* totals */
-    var d = dOf(R);
-    $('tn-pm').innerHTML = f2(R.pm) + '<small>/5</small>';
-    $('tn-duo').innerHTML = f2(R.duo) + '<small>/5</small>';
-    $('m-pm').style.width = (R.pm / 5 * 100).toFixed(1) + '%';
-    $('m-duo').style.width = (R.duo / 5 * 100).toFixed(1) + '%';
-    $('tot-pm').className = 'tot pm' + (d > 0.005 ? ' lead' : '');
-    $('tot-duo').className = 'tot duo' + (d < -0.005 ? ' lead' : '');
+    var d = D(R), inc = !R.complete, ok = R.ok;
+    $('h-tot').textContent = sec ? (inc ? '增量评估（暂算）' : '增量评估') : (inc ? '总分（暂算，满分 5）' : '总分（满分 5）');
+    $('tl-pm').textContent = sec ? 'A · 仅现有主力机' : '18 Pro Max';
+    $('tl-duo').textContent = sec ? 'B · 主力机 + Duo' : 'Duo';
+    $('m-pm').parentNode.style.display = sec ? 'none' : ''; $('m-duo').parentNode.style.display = sec ? 'none' : '';
+    if (sec) {
+      $('tn-pm').innerHTML = '基线';
+      $('tn-duo').innerHTML = ok ? sgn(R.net) + '<small>增量</small>' : '—';
+      $('rg-pm').textContent = '';
+      $('rg-duo').textContent = inc && ok ? '区间 ' + sgn(R.I[0]) + ' … ' + sgn(R.I[1]) : '';
+      $('tot-pm').className = 'tot pm' + (ok && !inc && d < -0.005 ? ' lead' : '');
+      $('tot-duo').className = 'tot duo' + (ok && !inc && d > 0.005 ? ' lead' : '');
+      $('chips').innerHTML = '<span class="chip duo"><i></i>保留 Duo 的增量 <b>' + (ok ? sgn(R.net) : '—') + '</b>' + (inc ? '<small>暂算</small>' : '') + '</span>';
+    } else {
+      $('tn-pm').innerHTML = ok ? f2(R.pm) + '<small>/5</small>' : '—';
+      $('tn-duo').innerHTML = ok ? f2(R.duo) + '<small>/5</small>' : '—';
+      $('m-pm').style.width = (ok ? R.pm / 5 * 100 : 0).toFixed(1) + '%';
+      $('m-duo').style.width = (ok ? R.duo / 5 * 100 : 0).toFixed(1) + '%';
+      $('rg-pm').textContent = inc && ok ? '区间 ' + f2(R.pmI[0]) + '–' + f2(R.pmI[1]) : '';
+      $('rg-duo').textContent = inc && ok ? '区间 ' + f2(R.duoI[0]) + '–' + f2(R.duoI[1]) : '';
+      $('tot-pm').className = 'tot pm' + (ok && !inc && d > 0.005 ? ' lead' : '');
+      $('tot-duo').className = 'tot duo' + (ok && !inc && d < -0.005 ? ' lead' : '');
+      $('chips').innerHTML =
+        '<span class="chip pm"><i></i>18 Pro Max <b>' + (ok ? f2(R.pm) : '—') + '</b>' + (inc ? '<small>暂算</small>' : '') + '</span>' +
+        '<span class="chip duo"><i></i>Duo <b>' + (ok ? f2(R.duo) : '—') + '</b>' + (inc ? '<small>暂算</small>' : '') + '</span>';
+    }
     $('gt-pm').innerHTML = gateHtml({ n: G.n, bad: G.pm.bad, pend: G.pm.pend });
     $('gt-duo').innerHTML = gateHtml({ n: G.n, bad: G.duo.bad, pend: G.duo.pend });
-    $('chips').innerHTML =
-      '<span class="chip pm"><i></i>18 Pro Max <b>' + f2(R.pm) + '</b></span>' +
-      '<span class="chip duo"><i></i>Duo <b>' + f2(R.duo) + '</b></span>';
-
-    var vt = R.ok ? verdictFull(R) : '至少给一项评分后显示结果';
-    var base = R.ok ? vt.split('，但')[0] : vt;
-    var rest = vt.slice(base.length);
-    $('verdict').innerHTML = (R.ok && Math.abs(d) >= 0.1 ? '<b>' + esc(base).replace(' 领先', '</b> 领先') : esc(base)) + esc(rest) + (R.ok ? '。' : '');
+    var vp = verdictParts(R);
+    $('verdict').innerHTML = esc(vp.pre) + (vp.b ? '<b>' + esc(vp.b) + '</b>' : '') + esc(vp.post) + (ok ? '。' : '');
+    var tn = tolNote(); $('gnote').textContent = tn.t; $('gnote').className = 'gnote' + (tn.bad ? ' bad' : '');
+    $('money').textContent = moneyLine();
     $('tags').textContent = scenTags().join(' · ');
-    $('btotal').textContent = sgn(d);
+    $('cap-l').textContent = sec ? '← 保留 Duo 的收益' : '← Duo 多得';
+    $('cap-r').textContent = sec ? '额外负担 →' : '18 Pro Max 多得 →';
+    $('bt-l').textContent = sec ? '合计（净增量：收益 − 负担）' : '合计（18 Pro Max − Duo）';
+    $('btotal').textContent = sgn(sec ? R.net : d);
     $('sens').innerHTML = sens(R);
-    radar(F); bars(R); save();
+    if (!sec) radar(R.F);
+    bars(R); save();
   }
 
   buildScen();

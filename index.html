@@ -289,6 +289,13 @@ input.num.duo { border-color: var(--duo); }
 .msel select { width: auto; }
 .sg { padding: 2px 8px; font-size: 12px; color: var(--muted); }
 .chip small { font-size: 11px; color: var(--muted); margin-left: 2px; }
+.mrow { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) !important; }
+.mcard { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; }
+.mct { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.ml b { font-weight: 600; }
+.ml b.pm { color: var(--pm-text); }
+.ml b.duo { color: var(--duo-text); }
+.mtot { border-top: 1px solid var(--line); margin-top: 4px; padding-top: 4px; }
 .mhint { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
 .mres { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
 .mline { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 2px 0; }
@@ -893,23 +900,30 @@ input.num.duo { border-color: var(--duo); }
       h += '<button type="button" class="add" data-add-t="1">+ 添加任务</button>' +
         '<div class="msel"><span' + tip('个人门槛，不是手机得分；两台手机同样适用') + '>无备用机时能否承受停机</span><select id="tol" aria-label="停机承受能力">' + optsHtml(TOLS, S.tol) + '</select></div></div></section>';
     }
-    var mo = !!openIn.money, two = sec ? ' two' : '';
+    var mo = !!openIn.money;
     function line(l, id, c) { return '<div class="mline"><span>' + l + '</span><b class="mnet ' + c + '" id="' + id + '"></b></div>'; }
     h += '<section class="grp"><div class="grp-head"><div class="grp-top">' +
       '<button type="button" class="gtog wide' + (mo ? ' open' : '') + '" data-toggle-money="1" aria-expanded="' + mo + '"><i class="chev"></i><span>金额明细</span></button>' +
       '<span class="gsum" id="msum"></span></div></div><div class="grp-body"' + (mo ? '' : ' hidden') + '>' +
-      '<div class="mhint">每台只填它自己的数字；留哪台，就按哪台算，另一台按退掉或卖掉算。</div>' +
-      '<div class="mcap' + two + '" aria-hidden="true"><span></span>' + (sec ? '' : '<span class="pm">18 Pro Max</span>') + '<span class="duo">Duo</span></div>';
-    MF.forEach(function (f) {
-      h += '<div class="mrow' + two + '"><span class="ml"' + tip(f[2]) + '>' + f[1] + '</span>' +
-        (sec ? '' : '<input class="num pm" type="number" inputmode="decimal" step="any" data-m="pm.' + f[0] + '" value="' + numVal(S.money.pm[f[0]]) + '" aria-label="18 Pro Max ' + f[1] + '">') +
-        '<input class="num duo" type="number" inputmode="decimal" step="any" data-m="duo.' + f[0] + '" value="' + numVal(S.money.duo[f[0]]) + '" aria-label="Duo ' + f[1] + '"></div>';
-    });
-    h += '<div class="mrow' + two + '"><span class="ml">持有期（月）</span><input class="num" type="number" min="1" max="120" step="1" data-hold="1" value="' + S.hold + '" aria-label="持有期月数"></div>' +
-      '<div class="mres">' +
-      (sec ? line('只留主力机（处理掉 Duo）', 'mn-pm', 'pm') + line('主力机 + Duo', 'mn-duo', 'duo') + line('留 Duo 比不留', 'mn-d', '')
-           : line('留 18 Pro Max（处理掉 Duo）', 'mn-pm', 'pm') + line('留 Duo（处理掉 18 Pro Max）', 'mn-duo', 'duo') + line('留 Duo 比留 18 Pro Max', 'mn-d', '')) +
-      '</div></div></section>';
+      '';
+    var DN = { pm: '18 Pro Max', duo: 'Duo' };
+    function mf(k) { for (var i = 0; i < MF.length; i++) if (MF[i][0] === k) return MF[i]; }
+    function card(title, rows, id, c) {
+      var s = '<div class="mcard"><div class="mct">' + title + '</div>';
+      rows.forEach(function (r) {
+        var f = mf(r[1]);
+        s += '<div class="mrow"><span class="ml"' + tip(f[2]) + '><b class="' + r[0] + '">' + DN[r[0]] + '</b> ' + f[1] + '</span>' +
+          '<input class="num ' + r[0] + '" type="number" inputmode="decimal" step="any" data-m="' + r[0] + '.' + r[1] + '" value="' + numVal(S.money[r[0]][r[1]]) + '" aria-label="' + DN[r[0]] + ' ' + f[1] + '"></div>';
+      });
+      return s + '<div class="mline mtot"><span>净值</span><b class="mnet ' + c + '" id="' + id + '"></b></div></div>';
+    }
+    h += sec
+      ? card('只留主力机，处理掉 Duo', [['duo', 'refund'], ['duo', 'sale']], 'mn-pm', 'pm') +
+        card('主力机 + Duo', [['duo', 'resid'], ['duo', 'extra'], ['duo', 'buy']], 'mn-duo', 'duo')
+      : card('留 18 Pro Max，处理掉 Duo', [['duo', 'refund'], ['duo', 'sale'], ['pm', 'resid'], ['pm', 'extra'], ['pm', 'buy']], 'mn-pm', 'pm') +
+        card('留 Duo，处理掉 18 Pro Max', [['pm', 'refund'], ['pm', 'sale'], ['duo', 'resid'], ['duo', 'extra'], ['duo', 'buy']], 'mn-duo', 'duo');
+    h += '<div class="mrow"><span class="ml">持有期（月）</span><input class="num" type="number" min="1" max="120" step="1" data-hold="1" value="' + S.hold + '" aria-label="持有期月数"></div>' +
+      '<div class="mres">' + line(sec ? '留 Duo 比不留' : '留 Duo 比留 18 Pro Max', 'mn-d', '') + '</div></div></section>';
     $('gate').innerHTML = h;
   }
   function buildInputs() {

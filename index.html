@@ -289,6 +289,9 @@ input.num.duo { border-color: var(--duo); }
 .msel select { width: auto; }
 .sg { padding: 2px 8px; font-size: 12px; color: var(--muted); }
 .chip small { font-size: 11px; color: var(--muted); margin-left: 2px; }
+.mhint { font-size: 12.5px; color: var(--muted); margin-bottom: 8px; }
+.mres { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+.mline { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 2px 0; }
 </style>
 </head>
 <body>
@@ -406,11 +409,11 @@ input.num.duo { border-color: var(--duo); }
   var TOLS = [['', '待定'], ['ok', '可以承受'], ['no', '无法承受']];
   var TASKS0 = ['微信', '抖音', '通信', '支付', '导航'];
   var MF = [
-    ['refund', '退款可得', '仍可获得的退货退款'],
-    ['sale', '出售或折抵', '可实现的出售或折抵金额；与退款取较高者，不叠加'],
-    ['resid', '期末残值', '持有期末的预期残值'],
-    ['extra', '额外费用', '额外设备、配件与服务费用'],
-    ['buy', '另购设备', '该方案下另购设备的费用']
+    ['refund', '退货可退', '现在把这台退掉，能拿回的钱'],
+    ['sale', '出售或折抵', '现在把这台卖掉或折抵，能拿回的钱；与上一项只取较高的，不叠加'],
+    ['resid', '期末残值', '留着这台，持有期末还值多少'],
+    ['extra', '额外费用', '留着这台，还要多花的配件、服务等费用'],
+    ['buy', '另购设备', '选择留这台时，还需另外购买设备的费用']
   ];
 
   var ITEMS = {
@@ -827,12 +830,13 @@ input.num.duo { border-color: var(--duo); }
     }
     return o;
   }
+  function amt(x) { return (x < 0 ? '−' : '') + Math.abs(x).toLocaleString('en-US', { maximumFractionDigits: 2 }); }
   function moneyLine() {
     var M = moneyCalc();
     if (!M.any) return '';
-    return '净经济差（保留 Duo − ' + (M.sec ? '仅主力机' : '保留 18 Pro Max') + '）：' + money(M.diff) + (M.miss ? '（未填 ' + M.miss + ' 项，按 0 计）' : '');
+    var dd = Math.abs(M.diff) < 0.005 ? '相同' : (M.diff > 0 ? '多 ' : '少 ') + amt(Math.abs(M.diff));
+    return '金额上，留 Duo 比' + (M.sec ? '只留主力机' : '留 18 Pro Max') + ' ' + dd + (M.miss ? '（未填 ' + M.miss + ' 项，按 0 计）' : '');
   }
-
   /* ---------- gate ---------- */
   function gateInfo() {
     var res = { pm: { bad: [], pend: 0 }, duo: { bad: [], pend: 0 }, n: 0 };
@@ -890,20 +894,22 @@ input.num.duo { border-color: var(--duo); }
         '<div class="msel"><span' + tip('个人门槛，不是手机得分；两台手机同样适用') + '>无备用机时能否承受停机</span><select id="tol" aria-label="停机承受能力">' + optsHtml(TOLS, S.tol) + '</select></div></div></section>';
     }
     var mo = !!openIn.money, two = sec ? ' two' : '';
+    function line(l, id, c) { return '<div class="mline"><span>' + l + '</span><b class="mnet ' + c + '" id="' + id + '"></b></div>'; }
     h += '<section class="grp"><div class="grp-head"><div class="grp-top">' +
       '<button type="button" class="gtog wide' + (mo ? ' open' : '') + '" data-toggle-money="1" aria-expanded="' + mo + '"><i class="chev"></i><span>金额明细</span></button>' +
       '<span class="gsum" id="msum"></span></div></div><div class="grp-body"' + (mo ? '' : ' hidden') + '>' +
-      '<div class="mcap' + two + '" aria-hidden="true"><span></span>' + (sec ? '' : '<span class="pm">保留 18 Pro Max</span>') + '<span class="duo">' + (sec ? '保留 Duo' : '保留 Duo') + '</span></div>';
+      '<div class="mhint">每台只填它自己的数字；留哪台，就按哪台算，另一台按退掉或卖掉算。</div>' +
+      '<div class="mcap' + two + '" aria-hidden="true"><span></span>' + (sec ? '' : '<span class="pm">18 Pro Max</span>') + '<span class="duo">Duo</span></div>';
     MF.forEach(function (f) {
-      h += '<div class="mrow' + two + '"><span class="ml"' + tip(f[2]) + '>' + (f[0] === 'resid' ? '期末残值（<span id="hold-l">' + S.hold + '</span> 个月）' : f[1]) + '</span>' +
+      h += '<div class="mrow' + two + '"><span class="ml"' + tip(f[2]) + '>' + f[1] + '</span>' +
         (sec ? '' : '<input class="num pm" type="number" inputmode="decimal" step="any" data-m="pm.' + f[0] + '" value="' + numVal(S.money.pm[f[0]]) + '" aria-label="18 Pro Max ' + f[1] + '">') +
         '<input class="num duo" type="number" inputmode="decimal" step="any" data-m="duo.' + f[0] + '" value="' + numVal(S.money.duo[f[0]]) + '" aria-label="Duo ' + f[1] + '"></div>';
     });
     h += '<div class="mrow' + two + '"><span class="ml">持有期（月）</span><input class="num" type="number" min="1" max="120" step="1" data-hold="1" value="' + S.hold + '" aria-label="持有期月数"></div>' +
-      '<div class="mrow' + two + '"><span class="ml">' + (sec ? '主力机 + Duo 净值' : '净值（换出另一台 + 残值 − 费用）') + '</span>' +
-      (sec ? '<span class="mnet duo" id="mn-duo"></span>' : '<span class="mnet pm" id="mn-pm"></span><span class="mnet duo" id="mn-duo"></span>') + '</div>' +
-      (sec ? '<div class="mrow two"><span class="ml">仅主力机净值（换出 Duo）</span><span class="mnet pm" id="mn-pm"></span></div>' : '') +
-      '</div></section>';
+      '<div class="mres">' +
+      (sec ? line('只留主力机（处理掉 Duo）', 'mn-pm', 'pm') + line('主力机 + Duo', 'mn-duo', 'duo') + line('留 Duo 比不留', 'mn-d', '')
+           : line('留 18 Pro Max（处理掉 Duo）', 'mn-pm', 'pm') + line('留 Duo（处理掉 18 Pro Max）', 'mn-duo', 'duo') + line('留 Duo 比留 18 Pro Max', 'mn-d', '')) +
+      '</div></div></section>';
     $('gate').innerHTML = h;
   }
   function buildInputs() {
@@ -1628,9 +1634,10 @@ input.num.duo { border-color: var(--duo); }
     }
     var M = moneyCalc();
     if ($('mn-duo')) {
-      $('mn-duo').textContent = M.any ? money(sec ? M.B : M.duo) : '';
-      if ($('mn-pm')) $('mn-pm').textContent = M.any ? money(sec ? M.A : M.pm) : '';
-      $('msum').textContent = M.any ? '差 ' + money(M.diff) : '';
+      $('mn-duo').textContent = M.any ? amt(sec ? M.B : M.duo) : '';
+      $('mn-pm').textContent = M.any ? amt(sec ? M.A : M.pm) : '';
+      $('mn-d').textContent = M.any ? (Math.abs(M.diff) < 0.005 ? '相同' : (M.diff > 0 ? '多 ' : '少 ') + amt(Math.abs(M.diff))) : '';
+      $('msum').textContent = M.any ? '留 Duo ' + (M.diff > 0.005 ? '+' : (M.diff < -0.005 ? '−' : '±')) + amt(Math.abs(M.diff)) : '';
     }
 
     /* totals */
